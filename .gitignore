@@ -13,7 +13,7 @@ ml_training_data/
 data/
 py_cache/
 out_err/
-*.shs
+*.sh
 *.out
 *.pyc
 *.csv
