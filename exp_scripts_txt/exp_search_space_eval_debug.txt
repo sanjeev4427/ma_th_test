@@ -1,0 +1,1 @@
+python main.py  --validate --dataset rwhar --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16 
