@@ -36,7 +36,7 @@ def mod_bar_plot_activity(algo_name, f1_score, f1_score_unmod, comp_saved, data_
     # percent_diff = [float(x) for sublist in percent_diff for x in sublist]
     
     # saving exp evaluation values
-    save_exp_eval_csv(comp_saved, data_saved, percent_diff, args, filepath)
+    # save_exp_eval_csv(comp_saved, data_saved, percent_diff, args, filepath)
     
     # Create a figure
     fig, ax = plt.subplots(figsize=(10, 6))

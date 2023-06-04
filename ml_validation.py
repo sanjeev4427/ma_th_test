@@ -246,6 +246,13 @@ def ml_validation(args, data, algo_name, log_folder_name):
                 mod_cp_savings_comp.to_csv(os.path.join(log_dir, 'mod_cp_savings_comp.csv'))
                 mod_cp_savings_data.to_csv(os.path.join(log_dir, 'mod_cp_savings_data.csv'))
     
+    # uncomment these lines if you want to debug
+    # nb_seeds=3
+    # nb_classes = 8
+    # nb_subj = 15
+    # mod_cp_scores = np.random.rand(4, nb_seeds, nb_classes, nb_subj)
+    # cp_scores = np.random.rand(4, nb_seeds, nb_classes, nb_subj)
+    # mod_cp_savings = np.random.rand(2, nb_seeds, nb_classes, nb_subj)
     evaluate_mod_participant_scores(algo_name, savings_scores=mod_cp_savings,
                             participant_scores=mod_cp_scores,
                             participant_scores_unmod=cp_scores,

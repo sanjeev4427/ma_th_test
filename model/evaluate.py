@@ -269,7 +269,7 @@ def evaluate_mod_participant_scores(algo_name, savings_scores, participant_score
 
     print('\nMODIFIED PREDICTION RESULTS')
     print('-------------------')
-    print('Over all activities and subjects average results...')
+    print('Calculating average performance/saving over all activities and subjects...')
     avg_acc_all = np.mean(participant_scores[0, :, :, :])
     std_acc_all = np.std(participant_scores[0, :, :, :])
     avg_prc_all = np.mean(participant_scores[1, :, :, :])
@@ -294,8 +294,9 @@ def evaluate_mod_participant_scores(algo_name, savings_scores, participant_score
           'Avg. comp saved {:.4f} (±{:.4f}), '.format(avg_comp_saved_all, std_comp_saved_all),'\n',
           'Avg. data saved {:.4f} (±{:.4f})'.format(avg_data_saved_all, std_data_saved_all))
     
+    # printing results without considering Null values
     if args.include_null:
-        print('Average results (no null)')
+        print('Average results (no null):')
         avg_acc = np.mean(participant_scores[0, :, 1:, :])
         std_acc = np.std(participant_scores[0, :, 1:, :])
         avg_prc = np.mean(participant_scores[1, :, 1:, :])
@@ -309,62 +310,157 @@ def evaluate_mod_participant_scores(algo_name, savings_scores, participant_score
               'Avg. Recall {:.4f} (±{:.4f}), '.format(avg_rcll, std_rcll),
               'Avg. F1-Score {:.4f} (±{:.4f})'.format(avg_f1, std_f1),'\n')
         
-    print('Average class results...')
-    avg_f1_activity = []
-    avg_f1_unmod_activity = []
-    avg_comp_saved_activity = []
-    avg_data_saved_activity = []
-    std_f1_activity = []
-    std_f1_unmod_activity = []
-    std_comp_saved_activity = []
-    std_data_saved_activity = []
+    print('Average class results (taking average over each run first)...')
+    # calculating avg. metrics for each seed layer for each activity
+    # empty list for metrics/saving seed wise
+    act_acc_seed_lst = [] 
+    act_prc_seed_lst = []
+    act_rcll_seed_lst = []
+    act_f1_seed_lst = []
+    act_f1_unmod_lst = []
+    act_comp_lst = []
+    act_data_lst = []
+    for s in range(args.nb_seeds):
+        act_acc_seed_lst.append(np.mean(participant_scores[0, s, :, :], axis=-1))
+        act_prc_seed_lst.append(np.mean(participant_scores[1, s, :, :], axis=-1))
+        act_rcll_seed_lst.append(np.mean(participant_scores[2, s, :, :], axis=-1))
+        act_f1_seed_lst.append(np.mean(participant_scores[3, s, :, :], axis=-1))
+        act_f1_unmod_lst.append(np.mean(participant_scores_unmod[3, s, :, :], axis= -1))
+        act_comp_lst.append(np.mean(savings_scores[0, s, :, :], axis=-1))
+        act_data_lst.append(np.mean(savings_scores[1, s, :, :], axis=-1))
+    
+    # calculating mean and standard deviation class wise, averaging over several runs
+    avg_acc_activity = np.mean(act_acc_seed_lst, axis=-2)
+    std_acc_activity = np.std(act_acc_seed_lst, axis=-2)
+    avg_prc_activity = np.mean(act_prc_seed_lst, axis=-2)
+    std_prc_activity = np.std(act_prc_seed_lst, axis=-2)
+    avg_rcll_activity = np.mean(act_rcll_seed_lst, axis=-2)
+    std_rcll_activity = np.std(act_rcll_seed_lst, axis=-2)
+    avg_f1_activity = np.mean(act_f1_seed_lst, axis=-2)
+    std_f1_activity = np.std(act_f1_seed_lst, axis=-2) 
+    avg_f1_unmod_activity = np.mean(act_f1_unmod_lst, axis=-2)
+    std_f1_unmod_activity = np.std(act_f1_unmod_lst, axis=-2)
+    avg_comp_saved_activity = np.mean(act_comp_lst, axis=-2)
+    std_comp_saved_activity = np.std(act_comp_lst, axis=-2)
+    avg_data_saved_activity = np.mean(act_data_lst, axis=-2)
+    std_data_saved_activity = np.std(act_data_lst, axis=-2)
+   
+    # printing avg./stdev for metrics/saving for each activity
     for i, class_name in enumerate(class_names):
-        avg_acc = np.mean(participant_scores[0, :, i, :])
-        std_acc = np.std(participant_scores[0, :, i, :])
-        avg_prc = np.mean(participant_scores[1, :, i, :])
-        std_prc = np.std(participant_scores[1, :, i, :])
-        avg_rcll = np.mean(participant_scores[2, :, i, :])
-        std_rcll = np.std(participant_scores[2, :, i, :])
-        avg_f1 = np.mean(participant_scores[3, :, i, :])
-        std_f1 = np.std(participant_scores[3, :, i, :])
-        avg_f1_unmod = np.mean(participant_scores_unmod[3, :, i, :])
-        std_f1_unmod = np.std(participant_scores_unmod[3, :, i, :])
-        avg_comp_saved = np.mean(savings_scores[0, :, i, :])
-        std_comp_saved = np.std(savings_scores[0, :, i, :])
-        avg_data_saved = np.mean(savings_scores[1, :, i, :])
-        std_data_saved = np.std(savings_scores[1, :, i, :])
-        print('Class {}: Avg. Accuracy {:.4f} (±{:.4f}), '.format(class_name, avg_acc, std_acc),
-              'Avg. Precision {:.4f} (±{:.4f}), '.format(avg_prc, std_prc),
-              'Avg. Recall {:.4f} (±{:.4f}), '.format(avg_rcll, std_rcll),'\n',
-              'Avg. F1-Score {:.4f} (±{:.4f})'.format(avg_f1, std_f1), '\n',
-              'Avg. F1-Score unmodified {:.4f} (±{:.4f})'.format(avg_f1_unmod, std_f1_unmod),'\n',
-              'Avg. comp saved {:.4f} (±{:.4f})'.format(avg_comp_saved, std_comp_saved),'\n',
-              'Avg. data saved {:.4f} (±{:.4f})'.format(avg_data_saved, std_data_saved))
-        # append avg. f1 score activity wise
-        avg_f1_activity.append(avg_f1)
-        avg_f1_unmod_activity.append(avg_f1_unmod)
-        avg_comp_saved_activity.append(avg_comp_saved)
-        avg_data_saved_activity.append(avg_data_saved)
-        # append std. f1 score activity wise
-        std_f1_activity.append(std_f1)
-        std_f1_unmod_activity.append(std_f1_unmod)
-        std_comp_saved_activity.append(std_comp_saved)
-        std_data_saved_activity.append(std_data_saved)
+        print('averaging over 3 seeds...')
+        print('Class {}: Avg. Accuracy {:.4f} (±{:.4f}), '.format(class_name, avg_acc_activity[i], std_acc_activity[i]),
+              'Avg. Precision {:.4f} (±{:.4f}), '.format(avg_prc_activity[i], std_prc_activity[i]),
+              'Avg. Recall {:.4f} (±{:.4f}), '.format(avg_rcll_activity[i], std_rcll_activity[i]),'\n',
+              'Avg. F1-Score {:.4f} (±{:.4f})'.format(avg_f1_activity[i], std_f1_activity[i]), '\n',
+              'Avg. F1-Score unmodified {:.4f} (±{:.4f})'.format(avg_f1_unmod_activity[i], std_f1_unmod_activity[i]),'\n',
+              'Avg. comp saved {:.4f} (±{:.4f})'.format(avg_comp_saved_activity[i], std_comp_saved_activity[i]),'\n',
+              'Avg. data saved {:.4f} (±{:.4f})'.format(avg_data_saved_activity[i], std_data_saved_activity[i]))
+        
+        # avg_acc = np.mean(participant_scores[0, :, i, :])
+        # std_acc = np.std(participant_scores[0, :, i, :])
+        # avg_prc = np.mean(participant_scores[1, :, i, :])
+        # std_prc = np.std(participant_scores[1, :, i, :])
+        # avg_rcll = np.mean(participant_scores[2, :, i, :])
+        # std_rcll = np.std(participant_scores[2, :, i, :])
+        # avg_f1 = np.mean(participant_scores[3, :, i, :])
+        # std_f1 = np.std(participant_scores[3, :, i, :])
+        # avg_f1_unmod = np.mean(participant_scores_unmod[3, :, i, :])
+        # std_f1_unmod = np.std(participant_scores_unmod[3, :, i, :])
+        # avg_comp_saved = np.mean(savings_scores[0, :, i, :])
+        # std_comp_saved = np.std(savings_scores[0, :, i, :])
+        # avg_data_saved = np.mean(savings_scores[1, :, i, :])
+        # std_data_saved = np.std(savings_scores[1, :, i, :])
+        # print('averaging over all subjs and seeds...')
+        # print('Class {}: Avg. Accuracy {:.4f} (±{:.4f}), '.format(class_name, avg_acc, std_acc),
+        #       'Avg. Precision {:.4f} (±{:.4f}), '.format(avg_prc, std_prc),
+        #       'Avg. Recall {:.4f} (±{:.4f}), '.format(avg_rcll, std_rcll),'\n',
+        #       'Avg. F1-Score {:.4f} (±{:.4f})'.format(avg_f1, std_f1), '\n',
+        #       'Avg. F1-Score unmodified {:.4f} (±{:.4f})'.format(avg_f1_unmod, std_f1_unmod),'\n',
+        #       'Avg. comp saved {:.4f} (±{:.4f})'.format(avg_comp_saved, std_comp_saved),'\n',
+        #       'Avg. data saved {:.4f} (±{:.4f})'.format(avg_data_saved, std_data_saved))
+    
+        # # append avg. f1 score activity wise
+        # avg_f1_activity.append(avg_f1)
+        # avg_f1_unmod_activity.append(avg_f1_unmod)
+        # avg_comp_saved_activity.append(avg_comp_saved)
+        # avg_data_saved_activity.append(avg_data_saved)
+        # # append std. f1 score activity wise
+        # std_f1_activity.append(std_f1)
+        # std_f1_unmod_activity.append(std_f1_unmod)
+        # std_comp_saved_activity.append(std_comp_saved)
+        # std_data_saved_activity.append(std_data_saved)
         
     # appending overall avg. scores
-    avg_f1_activity.append(avg_f1_all)
-    avg_f1_unmod_activity.append(avg_f1_unmod_all)
-    avg_comp_saved_activity.append(avg_comp_saved_all)
-    avg_data_saved_activity.append(avg_data_saved_all)
-    # appending overall std. scores
-    std_f1_activity.append(std_f1_all)
-    std_f1_unmod_activity.append(std_f1_unmod_all)
-    std_comp_saved_activity.append(std_comp_saved_all)
-    std_data_saved_activity.append(std_data_saved_all)
+    avg_f1_activity = np.append(avg_f1_activity, avg_f1_all)
+    avg_f1_unmod_activity = np.append(avg_f1_unmod_activity, avg_f1_unmod_all)
+    avg_comp_saved_activity = np.append(avg_comp_saved_activity, avg_comp_saved_all)
+    avg_data_saved_activity = np.append(avg_data_saved_activity, avg_data_saved_all)
+    std_f1_activity = np.append(std_f1_activity, std_f1_all)
+    std_f1_unmod_activity = np.append(std_f1_unmod_activity, std_f1_unmod_all)
+    std_comp_saved_activity = np.append(std_comp_saved_activity, std_comp_saved_all)
+    std_data_saved_activity = np.append(std_data_saved_activity, std_data_saved_all)
+        
+        
+    # print('Average class results (taking average over all subjs + runs)...')
+    # avg_f1_activity = []
+    # avg_f1_unmod_activity = []
+    # avg_comp_saved_activity = []
+    # avg_data_saved_activity = []
+    # std_f1_activity = []
+    # std_f1_unmod_activity = []
+    # std_comp_saved_activity = []
+    # std_data_saved_activity = []
+    # for i, class_name in enumerate(class_names):
+    #     avg_acc = np.mean(participant_scores[0, :, i, :])
+    #     std_acc = np.std(participant_scores[0, :, i, :])
+    #     avg_prc = np.mean(participant_scores[1, :, i, :])
+    #     std_prc = np.std(participant_scores[1, :, i, :])
+    #     avg_rcll = np.mean(participant_scores[2, :, i, :])
+    #     std_rcll = np.std(participant_scores[2, :, i, :])
+    #     avg_f1 = np.mean(participant_scores[3, :, i, :])
+    #     std_f1 = np.std(participant_scores[3, :, i, :])
+    #     avg_f1_unmod = np.mean(participant_scores_unmod[3, :, i, :])
+    #     std_f1_unmod = np.std(participant_scores_unmod[3, :, i, :])
+    #     avg_comp_saved = np.mean(savings_scores[0, :, i, :])
+    #     std_comp_saved = np.std(savings_scores[0, :, i, :])
+    #     avg_data_saved = np.mean(savings_scores[1, :, i, :])
+    #     std_data_saved = np.std(savings_scores[1, :, i, :])
+    #     print('Class {}: Avg. Accuracy {:.4f} (±{:.4f}), '.format(class_name, avg_acc, std_acc),
+    #           'Avg. Precision {:.4f} (±{:.4f}), '.format(avg_prc, std_prc),
+    #           'Avg. Recall {:.4f} (±{:.4f}), '.format(avg_rcll, std_rcll),'\n',
+    #           'Avg. F1-Score {:.4f} (±{:.4f})'.format(avg_f1, std_f1), '\n',
+    #           'Avg. F1-Score unmodified {:.4f} (±{:.4f})'.format(avg_f1_unmod, std_f1_unmod),'\n',
+    #           'Avg. comp saved {:.4f} (±{:.4f})'.format(avg_comp_saved, std_comp_saved),'\n',
+    #           'Avg. data saved {:.4f} (±{:.4f})'.format(avg_data_saved, std_data_saved))
+        
+    #     # append avg. f1 score activity wise
+    #     avg_f1_activity.append(avg_f1)
+    #     avg_f1_unmod_activity.append(avg_f1_unmod)
+    #     avg_comp_saved_activity.append(avg_comp_saved)
+    #     avg_data_saved_activity.append(avg_data_saved)
+    #     # append std. f1 score activity wise
+    #     std_f1_activity.append(std_f1)
+    #     std_f1_unmod_activity.append(std_f1_unmod)
+    #     std_comp_saved_activity.append(std_comp_saved)
+    #     std_data_saved_activity.append(std_data_saved)
+        
+    # # appending overall avg. scores
+    # avg_f1_activity.append(avg_f1_all)
+    # avg_f1_unmod_activity.append(avg_f1_unmod_all)
+    # avg_comp_saved_activity.append(avg_comp_saved_all)
+    # avg_data_saved_activity.append(avg_data_saved_all)
+    # # appending overall std. scores
+    # std_f1_activity.append(std_f1_all)
+    # std_f1_unmod_activity.append(std_f1_unmod_all)
+    # std_comp_saved_activity.append(std_comp_saved_all)
+    # std_data_saved_activity.append(std_data_saved_all)
+    
+    # calculate evaluation criterion
+    eval_criterion = np.abs(1-avg_f1_activity) + np.abs(1-avg_data_saved_activity/100) + np.abs(1-avg_comp_saved_activity/100)
     
     # save mean and std dev results for each experiment
     save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1_unmod_activity, std_f1_unmod_activity, \
-                            avg_comp_saved_activity, std_comp_saved_activity, avg_data_saved_activity, std_data_saved_activity, filepath, args)
+                            avg_comp_saved_activity, std_comp_saved_activity, avg_data_saved_activity, std_data_saved_activity,eval_criterion, filepath, args)
     
     # plot bar-graph for activity wise results
     mod_bar_plot_activity(algo_name, avg_f1_activity, avg_f1_unmod_activity, avg_comp_saved_activity, avg_data_saved_activity, filepath, args)
@@ -450,9 +546,10 @@ def evaluate_mod_participant_scores(algo_name, savings_scores, participant_score
     activity = args.class_names
     capital_activity = [word.replace('_', ' ').title() for word in activity]
     
-    X = participant_scores[0,0,:,:]
-    for i in range(args.nb_seeds-1):
-        X = np.concatenate((X, participant_scores[0,i+1,:,:]), axis=-1) # concatenating all the values from seeds to get the spread 
+    act_acc = np.vstack(act_acc_seed_lst)
+    act_prc = np.vstack(act_prc_seed_lst)
+    act_rcll = np.vstack(act_rcll_seed_lst)
+    act_f1 = np.vstack(act_f1_seed_lst)
         
     # axs[0, 0].set_title('Accuracy')
     # axs[0, 0].boxplot(participant_scores[0, :, :, :].T, labels=capital_activity, showmeans=True)
@@ -463,13 +560,13 @@ def evaluate_mod_participant_scores(algo_name, savings_scores, participant_score
     # axs[1, 1].set_title('F1-Score')
     # axs[1, 1].boxplot(participant_scores[3, :, :, :].T, labels=capital_activity, showmeans=True)
     axs[0, 0].set_title('Accuracy')
-    axs[0, 0].boxplot(X.T, labels=capital_activity, showmeans=True)
+    axs[0, 0].boxplot(act_acc, labels=capital_activity, showmeans=True)
     axs[0, 1].set_title('Precision')
-    axs[0, 1].boxplot(X.T, labels=capital_activity, showmeans=True)
+    axs[0, 1].boxplot(act_prc, labels=capital_activity, showmeans=True)
     axs[1, 0].set_title('Recall')
-    axs[1, 0].boxplot(X.T, labels=capital_activity, showmeans=True)
+    axs[1, 0].boxplot(act_rcll, labels=capital_activity, showmeans=True)
     axs[1, 1].set_title('F1-Score')
-    axs[1, 1].boxplot(X.T, labels=capital_activity, showmeans=True)
+    axs[1, 1].boxplot(act_f1, labels=capital_activity, showmeans=True)
     
     for ax in fig.axes:
         plt.sca(ax)

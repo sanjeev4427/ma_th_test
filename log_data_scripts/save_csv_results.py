@@ -151,7 +151,7 @@ def activity_save_best_results_to_csv(best_thrs_for_activity_lst,
 
 def save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1_unmod_activity, std_f1_unmod_activity, \
                             avg_comp_saved_activity, std_comp_saved_activity, avg_data_saved_activity, \
-                                std_data_saved_activity, filepath, args):
+                                std_data_saved_activity,eval_criterion, filepath, args):
     
     activity = args.class_names
     capital_activity = [word.replace('_', ' ').title() for word in activity]    
@@ -167,7 +167,9 @@ def save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1
             'avg_comp_saved_activity': avg_comp_saved_activity,
             'std_comp_saved_activity': std_comp_saved_activity,
             'avg_data_saved_activity': avg_data_saved_activity,
-            'std_data_saved_activity': std_data_saved_activity
+            'std_data_saved_activity': std_data_saved_activity,
+            'delta (f1-f1_unmod)': np.abs(avg_f1_activity - avg_f1_unmod_activity),
+            'eval_criterion': eval_criterion            
             }
     
     # Convert the dictionary to a DataFrame

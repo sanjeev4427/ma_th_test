@@ -11,9 +11,10 @@ for_experiment.py
 testing_script.py
 ml_training_data/
 data/
-py_cache/
+./GA_model/__pycache__/
 out_err/
 *.sh
 *.out
 *.pyc
 *.csv
+test_script_temp.py
