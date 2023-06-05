@@ -1,3 +1,37 @@
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name sa --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name ga --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_1 
+python main.py --seed 1 --dataset rwhar --algo_name ga --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name ga --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name ga --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_1 
+python main.py --seed 1 --dataset wetlab --algo_name ga --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_1
+
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name sa --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name ga --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_2 
+python main.py --seed 2 --dataset rwhar --algo_name ga --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name ga --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name ga --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_2 
+python main.py --seed 2 --dataset wetlab --algo_name ga --max_win_thr 512 --max_win_skip 512 --max_win_tol 16 --name max_win_512_512_16_seed_2
+
 python main.py --seed 3 --dataset rwhar --algo_name sa --max_win_thr 128 --max_win_skip 128 --max_win_tol 16 --name max_win_128_128_16_seed_3 
 python main.py --seed 3 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 16 --max_win_tol 16 --name max_win_16_16_16_seed_3 
 python main.py --seed 3 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16_seed_3 

@@ -11,6 +11,7 @@ import time
 import sys
 import numpy as np
 import pandas as pd
+from GA_model_all_activities_as_one.GA_all_activity import ga_all_activity
 # from GA_model.GA_activity_wise import ga_activity_wise
 from SA_model.find_initial_temperature import find_initial_temperature
 # import torch
@@ -26,6 +27,7 @@ from SA_model.generate_input_data_for_SA import ml_generate_train_data
 from SA_model.sim_ann_activity_wise import sim_ann_activity_wise
 from GA_model.GA_activity_wise import ga_activity_wise
 from SA_model.sim_ann_activity_wise_exp_gt import sim_ann_activity_wise_gt
+from SA_model_not_activity_wise.sim_ann_all_activities import sim_ann_all_activity
 from misc.close_excel import close_all_excel_files
 # from ml_evaluate import ml_evaluate
 from ml_validation import ml_validation
@@ -217,7 +219,7 @@ NB_SEEDS = 3 # Number of seeds using for statistical variation analysis
 # r_mut = 1.0 / (float(n_bits) * len(bounds))
 
 # for debugging
-VALIDATE = True
+VALIDATE = False
 DATASET = 'rwhar' 
 ALGO_NAME = 'sa' 
 MAX_WIN_THR = 128
@@ -331,15 +333,15 @@ def main(args):
      #                            max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, n_iter_init_temp)
 
 #----------------- SA training (activity wise) ------------------------------------------------------
-     if args.validate == False:
-          # Simulated Annealing training
-          if args.algo_name == 'sa':
-               if args.name != None: 
-                    print('Initializing Sim Ann...', '\n', 'Settings used are: ','\n', args.dataset, window_threshold, skip_windows, tol_value )
-                    sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
-                                        init_temp, ann_rate_array, log_date, log_timestamp, data  )
-               else:
-                    print("please enter the name of the experiment! ")
+     # if args.validate == False:
+     #      # Simulated Annealing training
+     #      if args.algo_name == 'sa':
+     #           if args.name != None: 
+     #                print('Initializing Sim Ann...', '\n', 'Settings used are: ','\n', args.dataset, window_threshold, skip_windows, tol_value )
+     #                sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
+     #                                    init_temp, ann_rate_array, log_date, log_timestamp, data  )
+     #           else:
+     #                print("please enter the name of the experiment! ")
                
      # taining on gt data (first window then tolerance) 
      # sim_ann_activity_wise_gt(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
@@ -360,6 +362,38 @@ def main(args):
 
 
 #-----------------------------------------------------------------------------
+#----------------- SA training (all activities) ------------------------------------------------------
+     # training on all activity predictions at once (all activities considered same)  
+     if args.validate == False:
+          # Simulated Annealing training
+          if args.algo_name == 'sa':
+               if args.name != None: 
+                    print('Initializing Sim Ann...', '\n', 'Settings used are: ','\n', args.dataset, window_threshold, skip_windows, tol_value )
+                    sim_ann_all_activity(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
+                                        init_temp, ann_rate_array, log_folder_name, data  )
+               else:
+                    print("please enter the name of the experiment! ")
+               
+     # taining on gt data (first window then tolerance) 
+     # sim_ann_activity_wise_gt(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
+     #                          init_temp, ann_rate_array[0], log_date, log_timestamp, data)
+    
+     # if args.validate == True: 
+     #      #validating on best settings 
+     #      if args.name != None: 
+     #           ml_validation(args, data, args.algo_name, log_folder_name)
+     #      else:
+     #           print("please enter the name of the experiment! ")
+               
+     # evaluation on best settings 
+     # ml_evaluate(sbj, args, log_dir, algo_name, data, f_one_gt_mod_val_act_wise_lst, filename_best_csv)
+     
+#     simulated_annealing_all_validation_data(args, window_threshold, skip_windows, max_step_size_win_thr, max_step_size_skip_win,\
+#                                              tol_value, init_temp, ann_rate_array, all_val_gt_two_times)
+
+
+#-----------------------------------------------------------------------------
+
 
 ################################ Genetic algorithm ####################################################
      # settings for GA
@@ -380,22 +414,46 @@ def main(args):
      r_mut = 1.0 / (float(n_bits) * len(bounds))
      # algo_name = 'GA'
      
+     # if args.validate == False:
+     #      # training with genetic algorithm 
+     #      if args.algo_name == 'ga':
+     #           print('Initializing GA...', '\n', 'Bounds used are: ', bounds)
+     #           if args.name != None:
+     #                ga_activity_wise(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_date, log_timestamp, data)
+     #                print('Done!')
+     #           else:
+     #                print("please enter the name of experiment! ")
+
+     
+#-------------------- GA training (all activities) ------------------------------------------------------
+     # settings for GA
+     # define range for input, first interval is for window threshold, 
+     # second interval is for window skip and third is for window tolrance.
+     bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [1,args.max_win_tol]]
+     # the max iterations (to stop getting stuck) 
+     max_iter = 100 #! update this 
+     # termination iteration
+     termin_iter = 5
+     # bits per variable
+     n_bits = 7
+     # define the population size
+     n_pop = 50
+     # crossover rate
+     r_cross = 0.9
+     # mutation rate
+     r_mut = 1.0 / (float(n_bits) * len(bounds))
+     algo_name = 'GA'
+     
      if args.validate == False:
           # training with genetic algorithm 
           if args.algo_name == 'ga':
                print('Initializing GA...', '\n', 'Bounds used are: ', bounds)
                if args.name != None:
-                    ga_activity_wise(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_date, log_timestamp, data)
+                    ga_all_activity(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, data)
                     print('Done!')
                else:
                     print("please enter the name of experiment! ")
     
-     # validation with genetic algorithm learned settings
-     
-     # args.name = args.dataset + algo_name 
-     # ml_validation(args, data, algo_name, log_date, log_timestamp)
-
-     
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

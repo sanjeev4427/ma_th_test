@@ -149,6 +149,92 @@ def activity_save_best_results_to_csv(best_thrs_for_activity_lst,
 
     return filename
 
+def all_act_save_best_results_to_csv(best_thrs_for_activity_lst, 
+                                    best_skip_win_for_activity_lst,
+                                    best_tol_val_for_activity_lst,
+                                    best_f1_for_activity_lst, f_one_target_lst, best_data_saved_for_activity_lst, 
+                                    best_comp_saved_for_activity_lst,
+                                    best_loss_for_activity_lst, elapsed_time_lst, f_one_gt_mod_val_lst,
+                                    f_one_gt_val_lst, f_one_val_mod_val_lst,f_one_gt_mod_val_avg_lst,f_one_gt_val_avg_lst, log_dir, args, algo_name, sbj):
+    
+    """
+    Save the best results for each activity to a CSV file.
+
+    Parameters:
+    -----------
+    best_thrs_for_activity_lst : list of floats
+        List of best thresholds for each activity.
+    best_skip_win_for_activity_lst : list of integers
+        List of best skip windows for each activity.
+    best_tol_val_for_activity_lst : list of floats
+        List of best tolerance values for each activity.
+    best_f1_for_activity_lst : list of floats
+        List of best f1 scores for each activity.
+    f_one_target_lst : list of floats
+        List of target f1 scores for each activity.
+    best_data_saved_for_activity_lst : list of floats
+        List of amount of data saved for each activity.
+    best_comp_saved_for_activity_lst : list of floats
+        List of amount of computation saved for each activity.
+    best_loss_for_activity_lst : list of floats
+        List of lowest loss values for each activity.
+    elapsed_time_lst : list of floats
+        List of elapsed times for each activity.
+    acitivity_name_lst : list of strings
+        List of activity names.
+    f_one_gt_mod_val_lst : list of floats
+        List of f1 scores with modified ground truth for each activity.
+    f_one_gt_val_lst : list of floats
+        List of f1 scores with original ground truth for each activity.
+    f_one_val_mod_val_lst : list of floats
+        List of f1 scores with modified predictions for each activity.
+    f_one_gt_mod_val_avg_lst : list of floats
+        List of average f1 scores with modified ground truth for each activity.
+    f_one_gt_val_avg_lst : list of floats
+        List of average f1 scores with original ground truth for each activity.
+    log_dir : str
+        Path to directory where the CSV file will be saved.
+    args : argparse.Namespace
+        Namespace containing the arguments passed to the script.
+    algo_name : str
+        Name of the algorithm.
+    sbj : str
+        Subject number.
+
+    Returns:
+    --------
+    filename : str
+        Path to the saved CSV file.
+    """
+    
+    best_dict_for_ann_rate = {'Threshold': best_thrs_for_activity_lst,
+                              'Skip Windows': best_skip_win_for_activity_lst,
+                              'Tolerance value': best_tol_val_for_activity_lst,
+                              'f1 score': best_f1_for_activity_lst,
+                              'Target f1': f_one_target_lst,
+                              'Data saved': best_data_saved_for_activity_lst,
+                              'Computation saved': best_comp_saved_for_activity_lst,
+                              'Lowest loss': best_loss_for_activity_lst,
+                              'Elapsed time': elapsed_time_lst,
+                              'f1_gt_train': f_one_gt_val_lst,
+                              'f1_gt_mod_train':f_one_gt_mod_val_lst,
+                              'f1_val_mod_train':f_one_val_mod_val_lst,
+                              'f_one_gt_mod_train_avg': f_one_gt_mod_val_avg_lst,
+                              'f_one_gt_train_avg': f_one_gt_val_avg_lst
+                              }
+    best_df = pd.DataFrame(best_dict_for_ann_rate)
+    mkdir_if_missing(log_dir)
+    if args.name:
+        filename = os.path.join(log_dir, f'best_results_for_all_{args.dataset}_{algo_name}' + '_' + f'{int(sbj)+1}' + '_' + args.name + '.csv')
+    else:
+        filename = os.path.join(log_dir, f'best_results_for_all_{args.dataset}_{algo_name}' + '_' + f'{int(sbj)+1}' + '.csv')
+    
+    best_df.to_csv (filename, index = False, header=True) 
+    print(best_df)
+
+    return filename
+
+
 def save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1_unmod_activity, std_f1_unmod_activity, \
                             avg_comp_saved_activity, std_comp_saved_activity, avg_data_saved_activity, \
                                 std_data_saved_activity,eval_criterion, filepath, args):
