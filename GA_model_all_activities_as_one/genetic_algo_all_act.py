@@ -12,7 +12,7 @@ from log_data_scripts.save_csv_results import activity_save_ml_train_to_csv
 
 
 # genetic algorithm
-def genetic_algorithm_all_act(args, all_mod_eval_output, bounds, n_bits, termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj):
+def genetic_algorithm_all_act(args, all_mod_eval_output, bounds, n_bits, termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj, activity_name):
 	
 	"""
 		A genetic algorithm function that optimizes a given function with a set of parameters within specified bounds.
@@ -148,7 +148,7 @@ def genetic_algorithm_all_act(args, all_mod_eval_output, bounds, n_bits, termin_
 	# activity_plot_threshold_gen(win_thrs_list, best_gen_list, config, activity_name)
 	# activity_plot_skip_windows_gen(skip_win_list, best_gen_list, config, activity_name)	
 	activity_save_ml_train_to_csv(best_loss_list, win_thrs_list, skip_win_list, tol_value_list, best_f1_list, 
-                                                best_data_saved_ratio_list, best_comp_saved_ratio_list, best_gen_list, args, log_dir, sbj)
+                                                best_data_saved_ratio_list, best_comp_saved_ratio_list, best_gen_list, args, log_dir, sbj, activity_name)
 	
 	return best_h_param, best_eval, best_f1, f_one_target, round(best_comp_saved,2), best_data_saved, f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
 																							best_f_one_gt_mod_val_avg, best_f_one_gt_val_avg

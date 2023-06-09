@@ -32,7 +32,7 @@ def window_to_time(window, config):
     return t
 
 def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
-                           init_temp, ann_rate,  log_date, log_timestamp, data):
+                           init_temp, ann_rate,  log_folder_name, data):
     """Apply simulated annealing algorithm for each activity and genrate optimized window values. 
 
     Args:
@@ -50,7 +50,7 @@ def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_s
     """
     
     config = vars(args)
-    log_dir = os.path.join('logs', log_date, log_timestamp)
+    log_dir = log_folder_name
 
     if config["dataset"] == 'rwhar':
         label_name = ['climbing_down', 'climbing_up', 'jumping', 'lying',\
@@ -107,7 +107,7 @@ def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_s
                     f_one_gt_mod_val_avg, f_one_gt_val_avg =\
                 simulated_annealing(activity, activity_name, args, window_threshold,\
                                     skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val,\
-                                        init_temp, ann_rate, log_date, log_timestamp, ml_train_gt_pred,sbj)
+                                        init_temp, ann_rate, log_dir, ml_train_gt_pred,sbj)
             # get the end time
             end_time = time.time()
             elapsed_time = end_time - start_time

@@ -1,5 +1,6 @@
 # genetic algorithm search of the one max optimization problem
 import os
+import numpy as np
 from numpy.random import randint
 from GA_model.crossover import crossover
 from GA_model.decode import decode
@@ -9,9 +10,18 @@ from GA_model.plotting_ga import activity_plot_comp_saved_gen, activity_plot_f1_
 from GA_model.selection import selection
 from log_data_scripts.save_csv_results import activity_save_ml_train_to_csv
 
+def apply_best_no_tol(activity_label, filename):
+    best = np.loadtxt(filename, skiprows=1, usecols=(1,2,3),delimiter=',').T
+    best_threshold = best[0]
+    best_win_skip = best[1]
+    best_tolerance = best[2]
+    window_threshold = best_threshold[int(activity_label)]
+    skip_window = best_win_skip[int(activity_label)]
+    tolerance_value = best_tolerance[int(activity_label)] 
+    return int(window_threshold), int(skip_window), int(tolerance_value)
 
 # genetic algorithm
-def genetic_algorithm(activity, activity_name, args, all_mod_eval_output, bounds, n_bits, termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj):
+def genetic_algorithm_gt_data(activity, args, all_mod_eval_output, n_bits, termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj,activity_label, filename_best_csv, activity_name):
 	
 	"""
 		A genetic algorithm function that optimizes a given function with a set of parameters within specified bounds.
@@ -44,10 +54,19 @@ def genetic_algorithm(activity, activity_name, args, all_mod_eval_output, bounds
 		ndarray: Array containing the best values of window threshold, skip windows, and tolerance value.
     """ 
 
+	best_filename_no_tol = filename_best_csv
+	win_thr, skip_win, _ = apply_best_no_tol(activity_label, best_filename_no_tol)
+	 # define the objective function
 	# initial population of random bitstring
-	pop = [randint(0, 2, n_bits*len(bounds)).tolist() for _ in range(n_pop)]
-	# decoding of bitstring
-	h_param = decode(bounds, n_bits, pop[0])
+ 	# generating tolerance pop only
+	pop = [randint(0, 2, n_bits).tolist() for _ in range(n_pop)]
+	
+ 	# tol bounds 
+	bounds = [[0,args.max_win_tol]]
+     # tolerance pop
+	h_param = [win_thr, skip_win]
+	# decoding of bitstring for tol pop
+	h_param.append(decode(bounds, n_bits, pop[0])[0])
 	score, f_one, f_one_target,\
 		data_saved_ratio, comp_saved_ratio,\
 				f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
@@ -80,7 +99,7 @@ def genetic_algorithm(activity, activity_name, args, all_mod_eval_output, bounds
 			break
 
 		# decode population
-		h_param_decoded = [decode(bounds, n_bits, p) for p in pop]
+		h_param_decoded = [[win_thr, skip_win, decode(bounds, n_bits, p)[0]] for p in pop]
 		# evaluate all candidates in the population
 		scores_pop = list()
 		f1_pop = list()
@@ -148,8 +167,8 @@ def genetic_algorithm(activity, activity_name, args, all_mod_eval_output, bounds
 	# activity_plot_comp_saved_gen(best_comp_saved_ratio_list, best_gen_list, config, activity_name)
 	# activity_plot_threshold_gen(win_thrs_list, best_gen_list, config, activity_name)
 	# activity_plot_skip_windows_gen(skip_win_list, best_gen_list, config, activity_name)	
-	# activity_save_ml_train_to_csv(best_loss_list, win_thrs_list, skip_win_list, tol_value_list, best_f1_list, #! uncomment to save the training data to csv
-    #                                             best_data_saved_ratio_list, best_comp_saved_ratio_list, best_gen_list, args, log_dir, sbj, activity_name)
+	activity_save_ml_train_to_csv(best_loss_list, win_thrs_list, skip_win_list, tol_value_list, best_f1_list, 
+                                                best_data_saved_ratio_list, best_comp_saved_ratio_list, best_gen_list, args, log_dir, sbj, activity_name)
 	
 	return best_h_param, best_eval[0], best_f1[0], f_one_target, round(best_comp_saved,2), best_data_saved, f_one_gt_mod_val[0],  f_one_gt_val[0], f_one_val_mod_val[0],\
 																							best_f_one_gt_mod_val_avg, best_f_one_gt_val_avg

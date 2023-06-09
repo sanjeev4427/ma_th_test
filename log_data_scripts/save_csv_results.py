@@ -40,7 +40,7 @@ from misc.osutils import mkdir_if_missing
 #     print(best_df)
 
 def activity_save_ml_train_to_csv(loss_array, window_threshold_array, skip_windows_array, tol_value_array, fscore_array, 
-                                                data_saved_array, comp_saved_array, temp_array, args, log_dir, sbj):
+                                                data_saved_array, comp_saved_array, temp_array, args, log_dir, sbj, activity_name):
 
     data_dict = {'loss': loss_array, 
                 'threshold_value': window_threshold_array, 
@@ -55,9 +55,9 @@ def activity_save_ml_train_to_csv(loss_array, window_threshold_array, skip_windo
     df = pd.DataFrame(data_dict)
     mkdir_if_missing(log_dir)
     if args.name:
-        filename = os.path.join(log_dir, f'ml_train_data__for_{args.dataset}_{args.algo_name}' + '_' + f'{int(sbj)+1}' + '_' + args.name + '.csv')
+        filename = os.path.join(log_dir, f'ml_train_data_for_{args.dataset}_{args.algo_name}' + '_' + f'{int(sbj)+1}' + '_' + f'{activity_name}' + '_' + args.name + '.csv')
     else:
-        filename = os.path.join(log_dir, f'ml_train_data__for_{args.dataset}_{args.algo_name}' + '_' + f'{int(sbj)+1}' + '_' + '.csv')
+        filename = os.path.join(log_dir, f'ml_train_data_for_{args.dataset}_{args.algo_name}' + '_' + f'{int(sbj)+1}' + '_' + f'{activity_name}' + '.csv')
     df.to_csv (filename, index = False, header=True)
 
 
@@ -254,7 +254,7 @@ def save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1
             'std_comp_saved_activity': std_comp_saved_activity,
             'avg_data_saved_activity': avg_data_saved_activity,
             'std_data_saved_activity': std_data_saved_activity,
-            'delta (f1-f1_unmod)': np.abs(avg_f1_activity - avg_f1_unmod_activity),
+            'Performance drop % (f1-f1_unmod)/f1_unmod': ((avg_f1_activity - avg_f1_unmod_activity)/avg_f1_unmod_activity)*100,
             'eval_criterion': eval_criterion            
             }
     

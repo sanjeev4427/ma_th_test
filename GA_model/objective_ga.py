@@ -34,10 +34,16 @@ def objective_ga(activity, args, h_param, all_mod_eval_output):
         #     else:
         #         loss = np.abs(1-f_one) + 2*np.abs(1-comp_saved_ratio*0.01) + 5
 
-        f_alpha = 10
-        c_alpha = 1
-        d_alpha = 2
+        # f_alpha = 10
+        # c_alpha = 1
+        # d_alpha = 2
+        
+        f_alpha = args.f_alpha
+        c_alpha = args.c_alpha
+        d_alpha = args.d_alpha
 
+        # print(f'loss param: {f_alpha, c_alpha, d_alpha}')
+        
         #set f1 target
         f_one_target = 1
         f_one = f_one_gt_mod_val

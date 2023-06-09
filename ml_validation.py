@@ -4,11 +4,56 @@ import csv
 import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, jaccard_score, precision_score, recall_score
+from SA_model_not_activity_wise.data_skipping_all_act import data_skipping_all_act
 from data_processing.data_analysis import plot_sensordata_and_labels
 from misc.osutils import mkdir_if_missing
 from model.evaluate import evaluate_mod_participant_scores
 from skip_heuristics_scripts.data_skipping import data_skipping
 
+def  apply_best_sett_exp_one_hy(sbj, args,*arg):  
+    """
+    Apply the best settings to the given subject's training and validation data.
+
+    Args:
+        sbj (str): The subject ID.
+        args (argparse.Namespace): The command-line arguments passed to the script.
+        *arg (str): Variable length argument list; the first argument should be the name of the file containing the best settings.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]: A tuple containing the following six elements:
+            mod_train_preds (np.ndarray): The modified predictions for the subject's training data after applying the best settings.
+            mod_val_preds (np.ndarray): The modified predictions for the subject's validation data after applying the best settings.
+            train_output (np.ndarray): The original predictions for the subject's training data.
+            val_output (np.ndarray): The original predictions for the subject's validation data.
+            mod_val_comp_saved (np.ndarray): The computation saved for each activity in the subject's validation data after applying the best settings.
+            mod_val_data_saved (np.ndarray): The data saved for each activity in the subject's validation data after applying the best settings.
+    """
+        
+    config=vars(args)   
+    # comapare f1 after applying best setting
+    if args.dataset == 'rwhar':
+        train_output = np.loadtxt(rf'./ml_training_data/rwhar/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        val_output = np.loadtxt(rf'./ml_training_data/rwhar/val_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        activity_labels = range(8)
+    elif args.dataset == 'wetlab':
+        train_output = np.loadtxt(rf'./ml_training_data/wetlab/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        val_output = np.loadtxt(rf'./ml_training_data/wetlab/val_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        activity_labels = range(10)
+
+    computations_saved = np.zeros(args.nb_classes)
+    data_saved = np.zeros(args.nb_classes)
+
+    # activate apply_best mode in dat_skipping
+    best_filename = arg[0]
+    apply_best = True
+
+    # apply best on training data
+    mod_train_preds,train_data_saved,train_comp_saved= data_skipping_all_act(np.copy(train_output[:,0]), config, data_saved, computations_saved, apply_best, best_filename)
+
+    # apply best on validation data
+    mod_val_preds,mod_val_data_saved,mod_val_comp_saved= data_skipping_all_act(np.copy(val_output[:,0]), config, data_saved, computations_saved, apply_best, best_filename)
+
+    return mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved
 
 def  apply_best_settings(sbj, args,*arg):  
     """
@@ -94,7 +139,7 @@ def ml_validation(args, data, algo_name, log_folder_name):
     exp1_1_0 = False
     exexp1_2_0 = False
     exp_less_sbj = False
-    exp_data_included = False
+    exp_one_hyp_all_act = True #! make it false if running other experiment
 
     for seed_i in range(0,args.nb_seeds): 
     # for seed_i in range(0,2): 
@@ -105,8 +150,8 @@ def ml_validation(args, data, algo_name, log_folder_name):
             elif exp_less_sbj:
                 filename_best_csv = fr"./best_files_exp/best_less_sbjs/{algo_name}/{args.dataset}/best_results_for_{args.dataset}_{algo_name}_{int(sbj)+1}.csv"
 
-            elif exp_data_included:
-                filename_best_csv = fr"./best_files_exp/best_files/{algo_name}/best_results_for_{args.dataset}_{algo_name}_{int(sbj)+1}.csv"
+            elif exp_one_hyp_all_act:
+                filename_best_csv = fr"./best_files_exp/exp_one_hyper_set/best_exp_one_hy_set/best_results_for_all_{args.dataset}_{algo_name.upper()}_{int(sbj)+1}_{args.name}_seed_{seed_i+1}.csv"
 
             else:
                 filename_best_csv = fr"./best_files_exp/exp_search_space/best_files_exp_search_space/best_results_for_{args.dataset}_{algo_name.upper()}_{int(sbj)+1}_{args.name}_seed_{seed_i+1}.csv"
@@ -114,9 +159,16 @@ def ml_validation(args, data, algo_name, log_folder_name):
             # for plotting sensor data.
             val_data = data[data[:, 0] == sbj]
 
+            # # modified training and validation predictions
+            # mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
+            #                                         = apply_best_settings(sbj, args,filename_best_csv)
+
+            # use this for exp_one_hyp_all_act experiment
+            if exp_one_hyp_all_act:
             # modified training and validation predictions
-            mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
-                                                    = apply_best_settings(sbj, args,filename_best_csv)
+                mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
+                                                    = apply_best_sett_exp_one_hy(sbj, args,filename_best_csv)
+                                                    
 
             val_gt = val_output[:,1]
             val_pred = np.copy(val_output[:,0])

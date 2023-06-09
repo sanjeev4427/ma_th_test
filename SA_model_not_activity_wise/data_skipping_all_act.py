@@ -12,7 +12,7 @@
 import math
 import numpy as np
 
-from skip_heuristics_scripts.apply_best_on_data_skip import apply_best_on_data_skip
+from skip_heuristics_scripts.apply_best_on_data_skip import apply_best_on_data_skip, apply_best_on_data_skip_exp_one_hy
 def tolerance_zone(
     mod_val_preds_current,
     config,
@@ -135,7 +135,7 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
             if apply_best == True:
                 current_activity = mod_val_preds[j - (window_count-1)]
                 filename = args[0]
-                _,_,tolerance_value = apply_best_on_data_skip(config, current_activity, filename)
+                _,_,tolerance_value = apply_best_on_data_skip_exp_one_hy(config, current_activity, filename)
                 config["saving_tolerance"] = tolerance_value
             (
                 window_count,
@@ -173,7 +173,7 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
         if apply_best == True:
             filename = args[0]
             current_activity = mod_val_preds[j - (window_count-1)]
-            window_threshold,window_skip,_ = apply_best_on_data_skip(config, current_activity,filename) 
+            window_threshold,window_skip,_ = apply_best_on_data_skip_exp_one_hy(config, current_activity,filename) 
         else:
             window_threshold = int(config["saving_window_threshold"])
             window_skip = int(config["saving_skip_windows"])
@@ -229,7 +229,7 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
             # )
             # saved computation simply count the number of window skip
             # saved computations are saved in class order
-            # computations_saved[int(mod_val_preds[j - (window_count-1)])] += window_skip
+            computations_saved[int(mod_val_preds[j - (window_count-1)])] += window_skip
             
             # reset window counter and last window
             window_count = 1

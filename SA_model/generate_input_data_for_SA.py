@@ -121,9 +121,9 @@ def ml_generate_train_data_exp_gt(data, args, sbj):
     config= vars(args)   
     
     if args.dataset == 'wetlab':
-        ml_train_data = np.loadtxt(rf'/ml_training_data/wetlab/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        ml_train_data = np.loadtxt(rf'./ml_training_data/wetlab/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
     elif args.dataset == 'rwhar':
-        ml_train_data = np.loadtxt(fr'/ml_training_data/rwhar/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
+        ml_train_data = np.loadtxt(fr'ml_training_data/rwhar/train_pred_sbj_{int(sbj)+1}.csv', dtype=float, delimiter=',')
 
     train_pred = ml_train_data[:,0]
     train_gt = ml_train_data[:,1] 

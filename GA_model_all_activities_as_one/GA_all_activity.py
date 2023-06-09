@@ -91,13 +91,13 @@ def ga_all_activity(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_i
         f_one_val_mod_val_lst = []
         f_one_gt_val_avg_lst = []
         f_one_gt_mod_val_avg_lst = []
-        
+        activity_name = 'x' # no single activity
         # get the start time
         start_time = time.time()
         best_h_param, loss, best_f1, f_one_target, best_comp_saved, best_data_saved,\
             f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
                     f_one_gt_mod_val_avg, f_one_gt_val_avg=\
-                            genetic_algorithm_all_act(args, ml_train_gt_pred, bounds, n_bits,  termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj)
+                            genetic_algorithm_all_act(args, ml_train_gt_pred, bounds, n_bits,  termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj, activity_name)
         # get the end time
         end_time = time.time()
         elapsed_time = end_time - start_time

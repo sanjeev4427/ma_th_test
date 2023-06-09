@@ -79,6 +79,7 @@ def anneal_objective(activity, args, h_param, all_mod_eval_output):
     window_threshold = h_param[:,0]
     skip_windows = h_param[:,1]
     tolerance_value = h_param[:,2]
+    
     f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val, f_one_gt_mod_val_avg, f_one_gt_val_avg, \
         comp_saved_ratio, data_saved_ratio, \
         computations_saved, data_saved, \
@@ -110,9 +111,17 @@ def anneal_objective(activity, args, h_param, all_mod_eval_output):
     comp_saved_ratio = skip_windows/(window_threshold + skip_windows)*100
     data_saved_ratio = 100*(skip_windows - lam*(skip_windows+1))/(skip_windows - lam*(skip_windows+1) + window_threshold + (window_threshold-1)*(1 - lam))
 
-    f_alpha = 10
-    c_alpha = 1
-    d_alpha = 2
+    # f_alpha = 10
+    # c_alpha = 1
+    # d_alpha = 2
+    
+    # changing the weights of the loss function
+    f_alpha = args.f_alpha
+    c_alpha = args.c_alpha
+    d_alpha = args.d_alpha
+    
+    print(f'loss param: {f_alpha, c_alpha, d_alpha}')
+    
     #set f1 target
     f_one_target = 1
     f_one = f_one_gt_mod_val
@@ -125,7 +134,7 @@ def anneal_objective(activity, args, h_param, all_mod_eval_output):
 
 def simulated_annealing(activity, activity_name, args, window_threshold, skip_windows,\
                           tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
-                            init_temp, ann_rate, log_date, log_timestamp, all_mod_eval_output,sbj):
+                            init_temp, ann_rate, log_dir, all_mod_eval_output,sbj):
     
     """
     Implements simulated annealing algorithm to optimize window threshold, skip windows, and tolerance value.
@@ -259,7 +268,8 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
                 print(f"best loss improved from {best_eval} to {candidate_eval}")
                 print(f"f1 score moved from {best_f1} to {candidate_f1} target is {f_one_target}. \n", 
                     f"Data saved moved from {best_data_saved} to {candidate_data_saved}. \n",
-                    f"Computation saved moved from {best_comp_saved} to {candidate_comp_saved}. \n")
+                    f"Computation saved moved from {best_comp_saved} to {candidate_comp_saved}. \n",
+                    f"Candidate solution: {candidate}. \n")
                 print("*"*10)
 
                 # store new best point
@@ -367,7 +377,7 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
     # plot_temperature_iter(temp_array, n_iter, config, ann_rate)
     # save_sim_ann_results_to_csv(loss_array, window_threshold_array, skip_windows_array, fscore_array, 
     #                                             data_saved_array, comp_saved_array, temp_array, config, ann_rate)
-    log_dir = os.path.join('logs', log_date, log_timestamp)
+    # log_dir = os.path.join('logs', log_date, log_timestamp)
     # activity_plot_loss_anneal(loss_array, n_iter, config, ann_rate, activity_name,args, log_dir)
     # activity_plot_f1_iter(fscore_array, n_iter, config, ann_rate, activity_name,args, log_dir)
     # activity_plot_data_saved_iter(data_saved_array, n_iter, config, ann_rate, activity_name, args, log_dir)
@@ -377,9 +387,10 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
     # activity_plot_skip_windows_iter(skip_windows_array, n_iter, config, ann_rate, activity_name, args, log_dir)
     # activity_plot_tol_value_iter(tol_value_array, n_iter, config, ann_rate, activity_name, args, log_dir)
     # activity_plot_temperature_iter(temp_array, n_iter, config, ann_rate, activity_name, args, log_dir)
-    
-    activity_save_ml_train_to_csv(loss_array, window_threshold_array, skip_windows_array, tol_value_array, fscore_array, 
-                                                data_saved_array, comp_saved_array, temp_array, args, log_dir, sbj)
+       
+     #! uncomment to save the training data to csv
+    # activity_save_ml_train_to_csv(loss_array, window_threshold_array, skip_windows_array, tol_value_array, fscore_array, 
+    #                                             data_saved_array, comp_saved_array, temp_array, args, log_dir, sbj, activity_name)
     
     return best, best_eval[0], best_f1, f_one_target, round(best_data_saved,2), round(best_comp_saved,2), best_f_one_gt_mod_val[0],  best_f_one_gt_val[0], best_f_one_val_mod_val[0],\
                                                                                                 best_f_one_gt_mod_val_avg, best_f_one_gt_val_avg
