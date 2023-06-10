@@ -223,7 +223,7 @@ def skip_heuristics_all_act(args, window_threshold, skip_windows, tolerance_valu
     )
     
     f_one_gt_mod_val = f1_score(all_val_gt, all_mod_val_preds, average= 'macro') 
-    f_one_gt_val = f1_score(all_val_gt, all_val_preds, average= 'macro') 
+    f_one_gt_val = f1_score(all_val_gt, all_val_preds, average= 'macro') #! this is same as f_one_gt_val_avg
     f_one_val_mod_val = f1_score(all_val_preds, all_mod_val_preds, average= 'macro') 
     f_one_gt_mod_val_avg = f1_score(all_val_gt, all_mod_val_preds, average= 'macro')
     f_one_gt_val_avg = f1_score(all_val_gt, all_val_preds, average= 'macro')

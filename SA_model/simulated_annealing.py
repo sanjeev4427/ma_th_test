@@ -120,7 +120,7 @@ def anneal_objective(activity, args, h_param, all_mod_eval_output):
     c_alpha = args.c_alpha
     d_alpha = args.d_alpha
     
-    print(f'loss param: {f_alpha, c_alpha, d_alpha}')
+    # print(f'loss param: {f_alpha, c_alpha, d_alpha}')
     
     #set f1 target
     f_one_target = 1
@@ -211,8 +211,9 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
             # update temperature
             temp = init_temp * (ann_rate)**i #! updated init instead of temp
             
-        # condition to stop the algorithm four consecutive non-improvement at temp value
-        if i >= 4 and np.average(acceptance_ratio_array[i-4:i]) <= 0.05:
+        # condition to stop the algorithm four consecutive non-improvement at temp value, 
+        # setting upper bound for temp states 15 to prevent from gettign stuck in inf loop
+        if (i >= 4 and np.average(acceptance_ratio_array[i-4:i]) <= 0.05) or i > 15:
             break
 
         print("-"*20)
@@ -363,7 +364,8 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
         # print(f'f1 score: {candidate_eval}') 
         # print(f'threshold value: {candidate[:,0]}')
         # print(f'tolerance value: {candidate[:,1]}')
-        # increase outer loop counter
+        
+        # increase outer loop counter, temp states
         i = i + 1
     print(f"total number of temperature states: {i} ", "\n"*2)
 
