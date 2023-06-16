@@ -246,16 +246,16 @@ def save_act_avg_std_results(algo_name, avg_f1_activity, std_f1_activity, avg_f1
     
     data = {
             'Activity': activities,
-            'avg_f1_activity': avg_f1_activity,
+            'avg_f1_activity': np.round(avg_f1_activity*100, decimals=2),
             'std_f1_activity': std_f1_activity,
-            'avg_f1_unmod_activity': avg_f1_unmod_activity,
+            'avg_f1_unmod_activity': np.round(avg_f1_unmod_activity*100, decimals=2),
             'std_f1_unmod_activity': std_f1_unmod_activity,
-            'avg_comp_saved_activity': avg_comp_saved_activity,
+            'avg_comp_saved_activity': np.round(avg_comp_saved_activity, decimals=2),
             'std_comp_saved_activity': std_comp_saved_activity,
-            'avg_data_saved_activity': avg_data_saved_activity,
+            'avg_data_saved_activity': np.round(avg_data_saved_activity, decimals=2),
             'std_data_saved_activity': std_data_saved_activity,
-            'Performance drop % (f1-f1_unmod)/f1_unmod': ((avg_f1_activity - avg_f1_unmod_activity)/avg_f1_unmod_activity)*100,
-            'eval_criterion': eval_criterion            
+            'Performance drop % (f1-f1_unmod)/f1_unmod': np.round(((avg_f1_activity - avg_f1_unmod_activity)/avg_f1_unmod_activity)*100, decimals=2),
+            'eval_criterion': np.round(eval_criterion, decimals=2)            
             }
     
     # Convert the dictionary to a DataFrame

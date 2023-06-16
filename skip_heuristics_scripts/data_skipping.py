@@ -181,7 +181,7 @@ def data_skipping(current_activity, mod_val_preds, config, data_saved, computati
         # computation saved 
         lam = config["sw_overlap"] /100
         computations_saved[int(mod_val_preds[j - (window_count-1)])] = window_skip/(window_skip + window_threshold)*100
-        data_saved[int(mod_val_preds[j - (window_count-1)])] = 100*(window_skip - lam*(window_skip+1))/(window_skip - lam*(window_skip+1) + window_threshold + (window_threshold-1)*(1 - lam))
+        data_saved[int(mod_val_preds[j - (window_count-1)])] = np.clip(100*(window_skip - lam*(window_skip+1))/(window_skip - lam*(window_skip+1) + window_threshold + (window_threshold-1)*(1 - lam)), a_min=0, a_max=None)
         if window_threshold < 0:
             window_threshold = 0
             activity_windows = 2

@@ -1,0 +1,9 @@
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 1 --c_alpha 0 --d_alpha 0 --name ex_loss_w_16_128_16_lp_1_0_0_seed_1
+python main.py --seed 1 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 1 --c_alpha 0 --d_alpha 0 --name ex_loss_w_16_128_16_lp_1_0_0_seed_1
+python main.py --seed 1 --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 1 --c_alpha 0 --d_alpha 0 --name ex_loss_w_16_128_16_lp_1_0_0_seed_1
+
+python main.py --seed 3 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 4 --c_alpha 1 --d_alpha 1 --name ex_loss_w_16_128_16_lp_4_1_1_seed_3
+python main.py --seed 1 --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 4 --c_alpha 1 --d_alpha 1 --name ex_loss_w_16_128_16_lp_4_1_1_seed_1
+
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 16 --c_alpha 1 --d_alpha 1 --name ex_loss_w_16_128_16_lp_16_1_1_seed_2
+python main.py --seed 2 --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --f_alpha 64 --c_alpha 1 --d_alpha 1 --name ex_loss_w_16_128_16_lp_64_1_1_seed_2

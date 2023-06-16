@@ -43,13 +43,32 @@ def loss_function(f_alpha, c_alpha, d_alpha, f_one, f_one_target, f_one_gt_val, 
     float: The loss value computed based on the given weights and parameters.
     """
 
-    
+    #! uncomment this if maximizing f1 is priority 
     if f_loss_diff < 0: # f_one more than target
         loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) + d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) - 5 
     elif f_loss_diff*100 < 1: # f1 less than target but differnce is less than 1 percent
-        loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) + + d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) 
+        loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) +  d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) 
     else:
-        loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) + + d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) + 5
+        loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) +  d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) + 5
+    
+    # # maximizing data saving is priority    
+    # loss_part = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) + d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg)
+    
+    # if data_saved_ratio > 95: 
+    #     loss = loss_part - 6 
+    # elif data_saved_ratio > 90: 
+    #     loss = loss_part - 5
+    # elif data_saved_ratio > 85:
+    #     loss = loss_part - 4
+    # elif data_saved_ratio > 80:
+    #     loss = loss_part - 3
+    # elif data_saved_ratio > 75:
+    #     loss = loss_part - 2
+    # elif data_saved_ratio > 70:
+    #     loss = loss_part - 1
+    # else:
+    #     loss = loss_part + (65 - data_saved_ratio) // 5
+    
     return loss
 
 # defining objective function

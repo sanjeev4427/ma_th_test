@@ -136,19 +136,18 @@ def ml_validation(args, data, algo_name, log_folder_name):
     log_dir = log_folder_name 
     mod_cp_savings = np.zeros((2, args.nb_seeds, args.nb_classes, len(lst_sbj)))
 
-    exp1_1_0 = False
-    exexp1_2_0 = False
-    exp_less_sbj = False
-    exp_one_hyp_all_act = True #! make it false if running other experiment
+    exp_loss_mx_data = False 
+    exp_loss_mx_f1 = True #! make it false if running other experiment
+    exp_one_hyp_all_act = False 
 
     for seed_i in range(0,args.nb_seeds): 
     # for seed_i in range(0,2): 
         for sbj in lst_sbj:
-            if exexp1_2_0:
-                filename_best_csv = fr'./best_files_exp/{args.dataset}_exp_1_2_0.csv'
+            if exp_loss_mx_data:
+                filename_best_csv = fr"./best_files_exp/exp_loss_fun/exp_mx_data_saved/best_files/best_results_for_{args.dataset}_{algo_name.upper()}_{int(sbj)+1}_{args.name}_seed_{seed_i+1}.csv"
 
-            elif exp_less_sbj:
-                filename_best_csv = fr"./best_files_exp/best_less_sbjs/{algo_name}/{args.dataset}/best_results_for_{args.dataset}_{algo_name}_{int(sbj)+1}.csv"
+            elif exp_loss_mx_f1:
+                filename_best_csv = fr"./best_files_exp/exp_loss_fun/exp_mx_fscore/best_files/best_results_for_{args.dataset}_{algo_name.upper()}_{int(sbj)+1}_{args.name}_seed_{seed_i+1}.csv"
 
             elif exp_one_hyp_all_act:
                 filename_best_csv = fr"./best_files_exp/exp_one_hyper_set/best_exp_one_hy_set/best_results_for_all_{args.dataset}_{algo_name.upper()}_{int(sbj)+1}_{args.name}_seed_{seed_i+1}.csv"
@@ -160,14 +159,14 @@ def ml_validation(args, data, algo_name, log_folder_name):
             val_data = data[data[:, 0] == sbj]
 
             # # modified training and validation predictions
-            # mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
-            #                                         = apply_best_settings(sbj, args,filename_best_csv)
+            mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
+                                                    = apply_best_settings(sbj, args,filename_best_csv)
 
             # use this for exp_one_hyp_all_act experiment
-            if exp_one_hyp_all_act:
+            # if exp_one_hyp_all_act:
             # modified training and validation predictions
-                mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
-                                                    = apply_best_sett_exp_one_hy(sbj, args,filename_best_csv)
+                # mod_train_preds, mod_val_preds, train_output, val_output, mod_val_comp_saved, mod_val_data_saved \
+                #                                     = apply_best_sett_exp_one_hy(sbj, args,filename_best_csv)
                                                     
 
             val_gt = val_output[:,1]
@@ -198,14 +197,14 @@ def ml_validation(args, data, algo_name, log_folder_name):
             # plot sensor data and subject wise activity and modified activity
             # to create activity plot wrt time from best settings 
             # mkdir_if_missing(log_dir)
-            # if args.name:
-            #     plot_sensordata_and_labels(val_data, sbj, val_gt, args.class_names, val_pred,
-            #                                 mod_val_preds,
-            #                                 figname=os.path.join(log_dir, 'sbj_' + str(int(sbj)) + '_' + args.dataset + '_' + args.algo_name + '_' + args.name + '.png'))
-            # else:
-            #     plot_sensordata_and_labels(val_data, sbj, val_gt, args.class_names, val_pred,
-            #                             mod_val_preds,
-            #                             figname=os.path.join(log_dir, 'sbj_' + str(int(sbj)) + '.png')) 
+            if args.name:
+                plot_sensordata_and_labels(val_data, sbj, val_gt, args.class_names, val_pred,
+                                            mod_val_preds,
+                                            figname=os.path.join(log_dir, 'sbj_' + str(int(sbj)+1) + '_' + args.dataset + '_' + args.algo_name + '_' + args.name + '.png'))
+            else:
+                plot_sensordata_and_labels(val_data, sbj, val_gt, args.class_names, val_pred,
+                                        mod_val_preds,
+                                        figname=os.path.join(log_dir, 'sbj_' + str(int(sbj)) + '.png')) 
 
             # fill values for normal evaluation
             labels = list(range(0, args.nb_classes))

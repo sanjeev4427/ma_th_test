@@ -304,7 +304,7 @@ def main(args):
      # minutes, seconds = divmod(rem, 60)
      # print("\nFinal time elapsed: {:0>2}:{:0>2}:{:05.2f}\n".format(int(hours), int(minutes), seconds))
      
-     ################################################ Simulated Annealing ##################################
+     ############################################ Simulated Annealing #################################################
      # settings for SA
      # setting range for hyperparameters to be optimised
      if args.dataset == 'wetlab':
@@ -338,24 +338,24 @@ def main(args):
      #                            max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, n_iter_init_temp)
 
 #----------------- SA training (activity wise) ------------------------------------------------------
-     if args.validate == False:
-          # Simulated Annealing training
-          if args.algo_name == 'sa':
-               if args.name != None: 
-                    print('Initializing Sim Ann...', '\n', 'Settings used are: ','\n', args.dataset, window_threshold, skip_windows, tol_value )
-                    print(f'loss param: {args.f_alpha, args.c_alpha, args.d_alpha}')
-                    sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
-                                        init_temp, ann_rate_array, log_folder_name, data)
-               else:
-                    print("please enter the name of the experiment! ")
+     # if args.validate == False:
+     #      # Simulated Annealing training
+     #      if args.algo_name == 'sa':
+     #           if args.name != None: 
+     #                print('Initializing Sim Ann...', '\n', 'Settings used are: ','\n', args.dataset, window_threshold, skip_windows, tol_value )
+     #                print(f'loss param: {args.f_alpha, args.c_alpha, args.d_alpha}')
+     #                sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
+     #                                    init_temp, ann_rate_array, log_folder_name, data)
+     #           else:
+     #                print("please enter the name of the experiment! ")
                
     
-     # if args.validate == True: 
-     #      #validating on best settings 
-     #      if args.name != None: 
-     #           ml_validation(args, data, args.algo_name, log_folder_name)
-     #      else:
-     #           print("please enter the name of the experiment! ")
+     if args.validate == True: 
+          #validating on best settings 
+          if args.name != None: 
+               ml_validation(args, data, args.algo_name, log_folder_name)
+          else:
+               print("please enter the name of the experiment! ")
 
 
 #-----------------------------------------------------------------------------
@@ -409,16 +409,16 @@ def main(args):
      r_mut = 1.0 / (float(n_bits) * len(bounds))
      # algo_name = 'GA'
      
-     if args.validate == False:
-          # training with genetic algorithm 
-          if args.algo_name == 'ga':
-               print('Initializing GA...', '\n', 'Bounds used are: ', bounds)
-               print(f'loss param: {args.f_alpha, args.c_alpha, args.d_alpha}')
-               if args.name != None:
-                    ga_activity_wise(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, data)
-                    print('Done!')
-               else:
-                    print("please enter the name of experiment! ")
+     # if args.validate == False:
+     #      # training with genetic algorithm 
+     #      if args.algo_name == 'ga':
+     #           print('Initializing GA...', '\n', 'Bounds used are: ', bounds)
+     #           print(f'loss param: {args.f_alpha, args.c_alpha, args.d_alpha}')
+     #           if args.name != None:
+     #                ga_activity_wise(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, data)
+     #                print('Done!')
+     #           else:
+     #                print("please enter the name of experiment! ")
 
      
 #-------------------- GA training (all activities) ------------------------------------------------------
@@ -479,7 +479,7 @@ def main(args):
      #           else:
      #                print("please enter the name of experiment! ")
      
-  #----------------------------------------------------------------
+  #------------------------------------------------------------------   
      
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
