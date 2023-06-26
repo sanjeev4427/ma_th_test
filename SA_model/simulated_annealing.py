@@ -24,7 +24,7 @@ from log_data_scripts.activity_plotting import activity_plot_f1_iter, activity_p
 
 # defining loss function
 def loss_function(f_alpha, c_alpha, d_alpha, f_one, f_one_target, f_one_gt_val, f_one_gt_mod_val_avg, comp_saved_ratio,data_saved_ratio):
-    f_loss_diff = f_one_gt_val - f_one    
+     
     """
     Computes the loss function based on the given parameters.
 
@@ -42,7 +42,7 @@ def loss_function(f_alpha, c_alpha, d_alpha, f_one, f_one_target, f_one_gt_val, 
     Returns:
     float: The loss value computed based on the given weights and parameters.
     """
-
+    f_loss_diff = f_one_gt_val - f_one   
     #! uncomment this if maximizing f1 is priority 
     if f_loss_diff < 0: # f_one more than target
         loss = f_alpha*np.abs(f_one_target-f_one) + c_alpha*np.abs(1-comp_saved_ratio*0.01) + d_alpha*np.abs(1-data_saved_ratio*0.01) + f_alpha*np.abs(f_one_target-f_one_gt_mod_val_avg) - 5 
@@ -280,11 +280,13 @@ def simulated_annealing(activity, activity_name, args, window_threshold, skip_wi
                                     f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
                                     f_one_gt_mod_val_avg, f_one_gt_val_avg \
                                         = anneal_objective(activity, args, candidate, all_mod_eval_output)
+            
+            print(j) #! comment this out
             # check for new best solution
             if candidate_eval < best_eval:
                 # report progress
                 print("*"*10)
-                # print(f"improvement at iteration {i+1} of {n_iter}", '\n'*2)
+                 # print(f"improvement at iteration {i+1} of {n_iter}", '\n'*2)
                 print(f"best loss improved from {best_eval} to {candidate_eval}")
                 print(f"f1 score moved from {best_f1} to {candidate_f1} target is {f_one_target}. \n", 
                     f"Data saved moved from {best_data_saved} to {candidate_data_saved}. \n",

@@ -1,0 +1,10 @@
+python main.py --validate --dataset rwhar --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16
+python main.py --validate --dataset wetlab --algo_name sa --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16
+python main.py --validate --dataset rwhar --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16
+python main.py --validate --dataset wetlab --algo_name ga --max_win_thr 16 --max_win_skip 128 --max_win_tol 16 --name max_win_16_128_16
+
+
+
+
+
+

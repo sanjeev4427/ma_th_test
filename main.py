@@ -207,6 +207,7 @@ F_ALPHA = 10
 C_ALPHA = 1
 D_ALPHA = 2
 
+
 # # settings for GA
 # # define range for input
 # bounds = [[1, 128], [1, 128], [1,10]]
@@ -224,13 +225,16 @@ D_ALPHA = 2
 # r_mut = 1.0 / (float(n_bits) * len(bounds))
 
 # for debugging
-# VALIDATE = False # True
-# DATASET = 'rwhar' 
-# ALGO_NAME = 'ga' 
-# MAX_WIN_THR = 16
-# MAX_WIN_SKIP = 128
-# MAX_WIN_TOL= 16
-# NAME= 'max_win_16_128_16'
+VALIDATE = True# True
+DATASET = 'wetlab' 
+ALGO_NAME = 'sa' 
+MAX_WIN_THR = 16
+MAX_WIN_SKIP = 128
+MAX_WIN_TOL= 16
+NAME= 'max_win_16_128_16'
+# EXP_ONE_HYP_ALL_ACT = True
+
+
 
 
 
@@ -350,12 +354,12 @@ def main(args):
      #                print("please enter the name of the experiment! ")
                
     
-     if args.validate == True: 
-          #validating on best settings 
-          if args.name != None: 
-               ml_validation(args, data, args.algo_name, log_folder_name)
-          else:
-               print("please enter the name of the experiment! ")
+     # if args.validate == True: 
+     #      #validating on best settings 
+     #      if args.name != None: 
+     #           ml_validation(args, data, args.algo_name, log_folder_name)
+     #      else:
+     #           print("please enter the name of the experiment! ")
 
 
 #-----------------------------------------------------------------------------
@@ -389,6 +393,14 @@ def main(args):
      #                          init_temp, ann_rate_array, log_folder_name, data)
      #           else:
      #                print("please enter the name of the experiment! ")
+     
+     if args.validate == True: 
+          #validating on best settings 
+          if args.name != None: 
+               ml_validation(args, data, args.algo_name, log_folder_name)
+          else:
+               print("please enter the name of the experiment! ")
+     
                
 ################################ Genetic algorithm ####################################################
      # settings for GA

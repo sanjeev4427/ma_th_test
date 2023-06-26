@@ -116,7 +116,8 @@ def data_skipping(current_activity, mod_val_preds, config, data_saved, computati
     # print(f"trained threshold value: {config['saving_threshold']}")
     # overlap adjustment parameter, i.e. how many windows are actually worth a new window worth of data
     overlap_adjustment = 1 / (1 - config["sw_overlap"] * 0.01)
-
+    
+    
     while j < (len(mod_val_preds)):        
         # if last window is same as current; increase counter
         if mod_val_preds[j] == last_window:
@@ -232,6 +233,7 @@ def data_skipping(current_activity, mod_val_preds, config, data_saved, computati
                 # saved computations are saved in class order
                 # computations_saved[int(mod_val_preds[j - (window_count-1)])] += window_skip
                 
+                
                 # reset window counter and last window
                 window_count = 1
                 last_window = -1
@@ -249,3 +251,4 @@ def data_skipping(current_activity, mod_val_preds, config, data_saved, computati
             # increase j
             j += 1
     return mod_val_preds, data_saved, computations_saved
+    

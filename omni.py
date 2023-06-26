@@ -111,7 +111,7 @@ parser.add_argument('--name', default=None, type=str, help='Name that will be di
 parser.add_argument('--gpus', default='1', type=int, help='Requested GPUs PER job')
 parser.add_argument('--nodes', default='1', type=int, help='Requested number of nodes.')
 parser.add_argument('--mem', default='230', type=int, help='Requested memory PER job')
-parser.add_argument('--timelimit', default=24, type=int, help='Requested hour limit PER job')
+parser.add_argument('--timelimit', default=24, type=int, help='Requested hour limit PER job') #! change timelimit to 24
 parser.add_argument('--throttling', default=None, type=int, help='Launch only this many jobs concurrently')
 parser.add_argument('--exclude', default=None, type=str, help='Exclude malfunctioning nodes. Has to be a string like gpu-node009')
 
@@ -181,14 +181,14 @@ SBATCH_PROTOTYPE = \
 #SBATCH --exclude=gpu-node[001,002,003,004,009,010]
 #SBATCH --output=out_err/%x_%A_%a.log
 #SBATCH --error=out_err/%x_%A_%a.log
-#SBATCH --time={args.timelimit}:00:00
+#SBATCH --time={args.timelimit}:00:00#! change it according to suitable partition
 #SBATCH --account=uni-siegen
 #SBATCH --qos=normal
 ##SBATCH --gres=gpu:{args.gpus}
 ##SBATCH --cpus-per-task={min(args.gpus * 16, 64)}
 #SBATCH --cpus-per-task=64
 ##SBATCH --partition=gpu
-#SBATCH --partition=medium
+#SBATCH --partition=medium #! change it to suitable partition
 #SBATCH --mem={args.mem}gb
 #SBATCH --mail-user={args.email if args.email is not None else username + "@uni-siegen.de"}
 #SBATCH --mail-type=FAIL,ARRAY_TASKS

@@ -116,7 +116,10 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
     # print(f"trained threshold value: {config['saving_threshold']}")
     # overlap adjustment parameter, i.e. how many windows are actually worth a new window worth of data
     overlap_adjustment = 1 / (1 - config["sw_overlap"] * 0.01)
-
+    threshold_count_act = np.zeros(config["nb_classes"])
+    skip_count_act = np.zeros(config["nb_classes"])
+    mod_val_preds_copy = np.copy(mod_val_preds)
+    
     while j < (len(mod_val_preds)):        
         # if last window is same as current; increase counter
         if mod_val_preds[j] == last_window:
@@ -214,12 +217,16 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
 
             if j + window_skip >= len(mod_val_preds):
                 # mod_val_preds[j - window_count :] = mod_val_preds[j - window_count]
-                mod_val_preds[j - (window_count-1) :] = mod_val_preds[j - (window_count-1)]
+                mod_val_preds[j - (window_count-1) :] = mod_val_preds[j - (window_count-1)] #! uncomment this
+                mod_val_preds_copy[j :] = -5 # to calculate the data and comp saving
+                
                 window_skip = len(mod_val_preds[j : ])
             else:
                 # from starting point to the end of window skip fill with activity at the star of current activity
                 # mod_val_preds[j - window_count : j + window_skip + 1] = mod_val_preds[j - window_count]
-                mod_val_preds[j - (window_count-1) : j + window_skip] = mod_val_preds[j - (window_count-1)]
+                mod_val_preds[j - (window_count-1) : j + window_skip] = mod_val_preds[j - (window_count-1)]#! uncomment this
+                mod_val_preds_copy[j : j + window_skip] = -5 # to calculate the data and comp saving
+                
             # data saved = num of wind to skip*length of window*non-overlap win
             # ? I think it misses to count the overlap data which is saved as well but if it window skip already
             # ? ...consider the overlap then there should be no overlap term here
@@ -229,7 +236,9 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
             # )
             # saved computation simply count the number of window skip
             # saved computations are saved in class order
-            computations_saved[int(mod_val_preds[j - (window_count-1)])] += window_skip
+            # computations_saved[int(mod_val_preds[j - (window_count-1)])] += window_skip
+            # skip_count_act[int(mod_val_preds[j - (window_count-1)])] += window_skip
+            # threshold_count_act[int(mod_val_preds[j - (window_count-1)])] += window_threshold
             
             # reset window counter and last window
             window_count = 1
@@ -244,4 +253,4 @@ def data_skipping_all_act(mod_val_preds, config, data_saved, computations_saved,
         else:
             # increase j
             j += 1
-    return mod_val_preds, data_saved, computations_saved
+    return mod_val_preds, mod_val_preds_copy, data_saved, computations_saved
