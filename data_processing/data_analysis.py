@@ -59,7 +59,7 @@ def plot_sensordata_and_labels(sensordata, sbj, gt, class_names, predictions, mo
     #     acc_y = sensordata[:, 2]
     #     acc_z = sensordata[:, 3]
 
-    n_classes = len(np.unique(gt))
+    n_classes = len(np.unique(gt)) #! remove +1 form here
     # # plot 1:
     fig, (ax2) = plt.subplots(1, 1, figsize=(18, 7))
     # ax1.plot(acc_x, color='blue')
@@ -81,7 +81,7 @@ def plot_sensordata_and_labels(sensordata, sbj, gt, class_names, predictions, mo
         ordered_labels.append(unordered_unique_labels[np.where(first_occurences_labels == index)[0][0]])
         order.append(np.where(first_occurences_labels == index)[0][0])
 
-    cmap1 = plt.cm.get_cmap('Set1', n_classes).reversed()
+    cmap1 = plt.cm.get_cmap('Set1', n_classes).reversed() 
     ax2.set_yticks([])
     ax2.set_xticks([])
     ax2.set_ylabel("Mod. Predictions  vs.  Predictions  vs.  Ground Truth ", fontsize=12)
@@ -93,7 +93,7 @@ def plot_sensordata_and_labels(sensordata, sbj, gt, class_names, predictions, mo
     plt.suptitle(figtitle, fontsize=16)
 
     c = [mpatches.Circle((0.5, 0.5), radius=0.25, color=cmap1(i), edgecolor="none") for i in
-         range(n_classes)]
+         range(n_classes)] #! remove -5 and list form here
 
     plt.legend(c, class_names, bbox_to_anchor=(0.5, -0.15), loc='lower center', ncol=n_classes,
                fancybox=True, shadow=True,
