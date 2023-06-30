@@ -1,15 +1,14 @@
-
+##################################
+# funcitons it train via GA and save training results
+##################################
 
 import time
-import os
 import numpy as np
-from GA_model.genetic_algo import genetic_algorithm
 from GA_model_all_activities_as_one.genetic_algo_all_act import genetic_algorithm_all_act
-from Other_helpful_scripts.bar_plot_act_f1_comp import bar_plot_act_f1_comp
 from SA_model.generate_input_data_for_SA import ml_generate_train_data
-# from Other_helpful_scripts.graph_activities_gt_val_mod_val import apply_best_settings_get_f1_full_data, graph_gt_val_mod_val
 from log_data_scripts.save_csv_results import activity_save_best_results_to_csv, all_act_save_best_results_to_csv
 
+# funciton to convert number of windows to time interval 
 def window_to_time(window, config):
     """
     Converts a window index to its corresponding time duration, given the configuration parameters.
@@ -42,6 +41,7 @@ def window_to_time(window, config):
     t = (window-1)*(1-config["sw_overlap"]/100)*one_window_duration + one_window_duration 
     return round(t,2)
 
+# GA training activity independent
 def ga_all_activity(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, *arg):
 
     """
@@ -93,6 +93,8 @@ def ga_all_activity(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_i
         f_one_gt_mod_val_avg_lst = []
         activity_name = 'x' # no single activity
         # get the start time
+        
+        # GA training 
         start_time = time.time()
         best_h_param, loss, best_f1, f_one_target, best_comp_saved, best_data_saved,\
             f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
@@ -124,7 +126,6 @@ def ga_all_activity(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_i
         best_data_saved_for_activity_lst.append(best_data_saved)
         best_comp_saved_for_activity_lst.append(best_comp_saved)
         best_loss_for_activity_lst.append(loss)
-        # acitivity_name_lst.append(activity_name)
         # get the execution time
         elapsed_time_lst.append(time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
         f_one_gt_val_lst.append(f_one_gt_val)
@@ -133,6 +134,7 @@ def ga_all_activity(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_i
         f_one_gt_mod_val_avg_lst.append(f_one_gt_mod_val_avg)
         f_one_gt_val_avg_lst.append(f_one_gt_val_avg)
         algo_name = 'GA'
+        # saving trained resukts to csv file
         filename_best_csv = all_act_save_best_results_to_csv(best_thrs_for_activity_lst, 
                                     best_skip_win_for_activity_lst,
                                     best_tol_val_for_activity_lst,

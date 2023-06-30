@@ -1,9 +1,7 @@
 ##################################################
 # All functions related to analysing sensor data
 ##################################################
-# Author: Marius Bock
-# Email: marius.bock(at)uni-siegen.de
-##################################################
+
 
 import numpy as np
 import pandas as pd

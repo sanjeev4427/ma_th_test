@@ -1,6 +1,6 @@
 from numpy.random import randint,rand
 
-# mutation operator
+# defining mutation operator
 def mutation(bitstring, r_mut):
 	for i in range(len(bitstring)):
 		# check for a mutation

@@ -1,20 +1,13 @@
 
 import numpy as np
 import time
-import os
-from sklearn.metrics import f1_score
-# from Other_helpful_scripts.bar_plot_act_f1_comp import bar_plot_act_f1_comp
-# from Other_helpful_scripts.graph_activities_gt_val_mod_val import apply_best_settings_get_f1_full_data, graph_gt_val_mod_val
 from SA_model.generate_input_data_for_SA import ml_generate_train_data
-
 from SA_model.simulated_annealing import simulated_annealing
 from log_data_scripts.save_csv_results import activity_save_best_results_to_csv
-from ml_evaluate import mod_bar_graph
-from ml_validation import ml_validation
+
 
  
 def window_to_time(window, config):
-    # sourcery skip: inline-immediately-returned-variable
     """ Convert a window to time duration.
 
     Args:
@@ -52,6 +45,7 @@ def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_s
     config = vars(args)
     log_dir = log_folder_name
 
+    # saving label names according to datasets
     if config["dataset"] == 'rwhar':
         label_name = ['climbing_down', 'climbing_up', 'jumping', 'lying',\
                        'running', 'sitting', 'standing', 'walking']
@@ -62,21 +56,8 @@ def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_s
         activity_labels = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
     for _, sbj in enumerate(np.unique(data[:, 0])):
-    # for sbj in [0]:
         # generating training data (validation data -> leave-one-out)
         ml_train_gt_pred = ml_generate_train_data(data, args, sbj)
-
-        # for activity in activity_labels:
-        #     # defining validation predictions, validation gt and madified validation predictions
-        #     all_val_preds = ml_train_gt_pred[:,0]
-        #     all_mod_val_preds = np.copy(ml_train_gt_pred[:,0])
-        #     all_val_gt = ml_train_gt_pred[:,1]
-
-        #     f_one_gt_mod_val = f1_score(all_val_gt, all_mod_val_preds, labels = np.array([activity]), average= None) 
-        #     f_one_gt_val = f1_score(all_val_gt, all_val_preds, labels = np.array([activity]), average= None) 
-
-        #     print(f'activity {activity} f1 gt val: {f_one_gt_val}')
-        #     print(f'f1 gt mod val: {f_one_gt_mod_val}', '\n')
 
         # creating empty lists to save best settings, performance metrics 
         best_thrs_for_activity_lst = []
@@ -152,6 +133,3 @@ def sim_ann_activity_wise(args, window_threshold, skip_windows, tol_value, max_s
                                     best_comp_saved_for_activity_lst,
                                     best_loss_for_activity_lst, elapsed_time_lst, acitivity_name_lst,f_one_gt_mod_val_lst,
                                     f_one_gt_val_lst, f_one_val_mod_val_lst,f_one_gt_mod_val_avg_lst,f_one_gt_val_avg_lst, log_dir, args, algo_name, sbj)
-
-        # to create bar plot of f1 score after training (each activity is only trained individually and best settings are not applied to whole data set)
-        # bar_plot_act_f1_comp(sbj, acitivity_name_lst, best_f1_for_activity_lst, f_one_gt_val_lst, best_comp_saved_for_activity_lst, log_dir, config, algo_name, f1_avg =False)

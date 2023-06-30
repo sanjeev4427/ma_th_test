@@ -49,6 +49,8 @@ def genetic_algorithm_all_act(args, all_mod_eval_output, bounds, n_bits, termin_
 	pop = [randint(0, 2, n_bits*len(bounds)).tolist() for _ in range(n_pop)]
 	# decoding of bitstring
 	h_param = decode(bounds, n_bits, pop[0])
+	
+	# calling objective function to get score of current candidates 
 	score, f_one, f_one_target,\
 		data_saved_ratio, comp_saved_ratio,\
 				f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
@@ -68,6 +70,8 @@ def genetic_algorithm_all_act(args, all_mod_eval_output, bounds, n_bits, termin_
 	# enumerate generations
 	gen = 0
 	termin_count = 0
+	
+	# iterate till max. iter (termin_iter)
 	while termin_count < termin_iter:
 		# counting generations
 		gen += 1 

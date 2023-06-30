@@ -288,17 +288,17 @@ def main(args):
           init_temp = 0.083 
           print(f'Dataset used: {args.dataset}, threshold window: {window_threshold}, skip window: {skip_windows}, tolerance winsows: {tol_value}')
 
-     # iterations at every Temperature value (for finding initial temperature )
-     n_iter_init_temp = 30
-     # define the maximum step size for threshold values
-     max_step_size_win_thr = 50
-     # define the maximum step size for skip windows
-     max_step_size_skip_win = 50
-     # define maximum step size for tolerance values
-     max_step_size_tol_val = 3
-     # annealing rate
-     ann_rate_array = 0.5
-     # algo_name = 'SA'
+     # # iterations at every Temperature value (for finding initial temperature )
+     # n_iter_init_temp = 30
+     # # define the maximum step size for threshold values
+     # max_step_size_win_thr = 50
+     # # define the maximum step size for skip windows
+     # max_step_size_skip_win = 50
+     # # define maximum step size for tolerance values
+     # max_step_size_tol_val = 3
+     # # annealing rate
+     # ann_rate_array = 0.5
+     # # algo_name = 'SA'
 #--------------- finding initial temperature (activity wise) --------------------------------
      # uncomment the following function to find the initial temperature
      # find_initial_temperature(data, args, tol_value,\
@@ -349,23 +349,23 @@ def main(args):
 ################################################### Genetic algorithm ##########################################################
 
 #--------------------------- GA training (exp 2, activity wise, change loss function for exp 4) -----------------------------------------------
-     # settings for GA
-     # define range for input, first interval is for window threshold, 
-     # second interval is for window skip and third is for window tolrance.
-     bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [1,args.max_win_tol]]
-     # the max iterations (to stop getting stuck) 
-     max_iter = 100
-     # termination iteration
-     termin_iter = 5
-     # bits per variable
-     n_bits = 7
-     # define the population size
-     n_pop = 50
-     # crossover rate
-     r_cross = 0.9
-     # mutation rate
-     r_mut = 1.0 / (float(n_bits) * len(bounds))
-     # algo_name = 'GA'
+     # # settings for GA
+     # # define range for input, first interval is for window threshold, 
+     # # second interval is for window skip and third is for window tolrance.
+     # bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [1,args.max_win_tol]]
+     # # the max iterations (to stop getting stuck) 
+     # max_iter = 100
+     # # termination iteration
+     # termin_iter = 5
+     # # bits per variable
+     # n_bits = 7
+     # # define the population size
+     # n_pop = 50
+     # # crossover rate
+     # r_cross = 0.9
+     # # mutation rate
+     # r_mut = 1.0 / (float(n_bits) * len(bounds))
+     # # algo_name = 'GA'
      
 
      # if args.validate == False:
@@ -404,28 +404,28 @@ def main(args):
      #      if args.algo_name == 'ga':
      #           print('Initializing GA...', '\n', 'Bounds used are: ', bounds)
      #           if args.name != None:
-                    # ga_all_activity(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, data)
+     #                ga_all_activity(args, data,  bounds, n_bits, n_pop, r_cross, r_mut, termin_iter, max_iter, log_folder_name, data)
      #                print('Done!')
      #           else:
      #                print("please enter the name of experiment! ")
     
 #-------------------- GA training (exp 3, on GT data) ------------------------------------------------------
-     # settings for GA
-     # define range for input, first interval is for window threshold, 
-     # second interval is for window skip and third is for window tolrance.
-     bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [0,args.max_win_tol]]
-     # the max iterations (to stop getting stuck) 
-     max_iter = 100 #! update this to 100
-     # termination iteration
-     termin_iter = 5
-     # bits per variable
-     n_bits = 7
-     # define the population size
-     n_pop = 50 #! update this to 50
-     # crossover rate
-     r_cross = 0.9
-     # mutation rate
-     r_mut = 1.0 / (float(n_bits) * len(bounds))
+     # # settings for GA
+     # # define range for input, first interval is for window threshold, 
+     # # second interval is for window skip and third is for window tolrance.
+     # bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [0,args.max_win_tol]]
+     # # the max iterations (to stop getting stuck) 
+     # max_iter = 100 #! update this to 100
+     # # termination iteration
+     # termin_iter = 5
+     # # bits per variable
+     # n_bits = 7
+     # # define the population size
+     # n_pop = 50 #! update this to 50
+     # # crossover rate
+     # r_cross = 0.9
+     # # mutation rate
+     # r_mut = 1.0 / (float(n_bits) * len(bounds))
      # algo_name = 'GA'
      
      # if args.validate == False:
@@ -442,13 +442,13 @@ def main(args):
 
 ####################################################### validation ML ##############################################################
 
-# validation (LOSO)
-     if args.validate == True: 
-          #validating on best settings 
-          if args.name != None: 
-               ml_validation(args, data, args.algo_name, log_folder_name)
-          else:
-               print("please enter the name of the experiment! ")
+# # validation (LOSO)
+#      if args.validate == True: 
+#           #validating on best settings 
+#           if args.name != None: 
+#                ml_validation(args, data, args.algo_name, log_folder_name)
+#           else:
+#                print("please enter the name of the experiment! ")
 #-------------------------------------------------------------------------------------------------------------       
 
 

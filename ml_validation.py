@@ -24,6 +24,7 @@ def  apply_best_sett_exp_one_hy(sbj, args,log_dir,*arg):
         Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]: A tuple containing the following six elements:
             mod_train_preds (np.ndarray): The modified predictions for the subject's training data after applying the best settings.
             mod_val_preds (np.ndarray): The modified predictions for the subject's validation data after applying the best settings.
+             mod_val_preds_copy (np.ndarray): The modified predictions for the subject's validation data after applying the best settings.
             train_output (np.ndarray): The original predictions for the subject's training data.
             val_output (np.ndarray): The original predictions for the subject's validation data.
             mod_val_comp_saved (np.ndarray): The computation saved for each activity in the subject's validation data after applying the best settings.
@@ -375,6 +376,8 @@ def ml_validation(args, data, algo_name, log_folder_name):
     # mod_cp_scores = np.random.rand(4, nb_seeds, nb_classes, nb_subj)
     # cp_scores = np.random.rand(4, nb_seeds, nb_classes, nb_subj)
     # mod_cp_savings = np.random.rand(2, nb_seeds, nb_classes, nb_subj)
+    
+    # function to claculate class wise and subject wise avg. scores and create plots
     evaluate_mod_participant_scores(algo_name, savings_scores=mod_cp_savings,
                             participant_scores=mod_cp_scores,
                             participant_scores_unmod=cp_scores,

@@ -42,7 +42,9 @@ def window_to_time(window, config):
     t = (window-1)*(1-config["sw_overlap"]/100)*one_window_duration + one_window_duration 
     return round(t,2)
 
+# funciton to train tolerance while keeping other hyp as constant fot exp 3
 def train_tolerance_hyp(args, data, n_bits,  n_pop, r_cross, r_mut, termin_iter, max_iter, log_dir, sbj, filename_best_csv, exp_name):
+        
         print("--------training tolerance hyp-----------")
         config = vars(args)
         # log_dir = os.path.join('logs', log_date, log_timestamp)
@@ -60,6 +62,7 @@ def train_tolerance_hyp(args, data, n_bits,  n_pop, r_cross, r_mut, termin_iter,
 
         # reading hyp values from csv file
         best_filename_no_tol = filename_best_csv
+        
         # distinguishing file names
         args.name = exp_name + '_' + 'tol_train'
 
@@ -85,6 +88,8 @@ def train_tolerance_hyp(args, data, n_bits,  n_pop, r_cross, r_mut, termin_iter,
             activity_name = label_name[activity]
             # get the start time
             start_time = time.time()
+            
+            # running GA for activiy wise training
             best_h_param, loss, best_f1, f_one_target, best_comp_saved, best_data_saved,\
                 f_one_gt_mod_val,  f_one_gt_val, f_one_val_mod_val,\
                         f_one_gt_mod_val_avg, f_one_gt_val_avg=\
@@ -124,6 +129,7 @@ def train_tolerance_hyp(args, data, n_bits,  n_pop, r_cross, r_mut, termin_iter,
             f_one_gt_mod_val_avg_lst.append(f_one_gt_mod_val_avg)
             f_one_gt_val_avg_lst.append(f_one_gt_val_avg)
         algo_name = 'GA'
+        # saving results to csv file
         filename_best_csv = activity_save_best_results_to_csv(best_thrs_for_activity_lst, 
                                     best_skip_win_for_activity_lst,
                                     best_tol_val_for_activity_lst,
@@ -131,8 +137,6 @@ def train_tolerance_hyp(args, data, n_bits,  n_pop, r_cross, r_mut, termin_iter,
                                     best_comp_saved_for_activity_lst,
                                     best_loss_for_activity_lst, elapsed_time_lst, acitivity_name_lst,f_one_gt_mod_val_lst,
                                     f_one_gt_val_lst, f_one_val_mod_val_lst, f_one_gt_mod_val_avg_lst, f_one_gt_val_avg_lst, log_dir, args, algo_name, sbj)
-        
-        
     
 def ga_activity_wise_exp_gt(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, termin_iter, max_iter, log_dir, *arg):
 
@@ -160,7 +164,6 @@ def ga_activity_wise_exp_gt(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, 
     """
     
     config = vars(args)
-    # log_dir = os.path.join('logs', log_date, log_timestamp)
     if config["dataset"] == 'rwhar':
         label_name = ['climbing_down', 'climbing_up', 'jumping', 'lying',\
                        'running', 'sitting', 'standing', 'walking']
@@ -170,9 +173,9 @@ def ga_activity_wise_exp_gt(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, 
                        'pipetting', 'pouring', 'stirring', 'transfer']
         activity_labels = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
     
-    # activity_labels = np.array([9])
+    # training loop, 1 subj is left for validation and remaining for training
     for _, sbj in enumerate(np.unique(data[:, 0])):
-    # for sbj in [0]:
+        
         # generating training data (validation data -> leave-one-out)
         ml_train_gt_gt = ml_generate_train_data_exp_gt(data, args, sbj)
 
@@ -247,6 +250,7 @@ def ga_activity_wise_exp_gt(args, data, bounds, n_bits,  n_pop, r_cross, r_mut, 
             f_one_gt_mod_val_avg_lst.append(f_one_gt_mod_val_avg)
             f_one_gt_val_avg_lst.append(f_one_gt_val_avg)
         algo_name = 'GA'
+        # save the trained results to a csv file
         filename_best_csv = activity_save_best_results_to_csv(best_thrs_for_activity_lst, 
                                     best_skip_win_for_activity_lst,
                                     best_tol_val_for_activity_lst,

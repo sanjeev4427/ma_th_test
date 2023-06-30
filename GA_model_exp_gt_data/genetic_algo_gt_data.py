@@ -10,6 +10,7 @@ from GA_model.plotting_ga import activity_plot_comp_saved_gen, activity_plot_f1_
 from GA_model.selection import selection
 from log_data_scripts.save_csv_results import activity_save_ml_train_to_csv
 
+# function to read trained hyper params 
 def apply_best_no_tol(activity_label, filename):
     best = np.loadtxt(filename, skiprows=1, usecols=(1,2,3),delimiter=',').T
     best_threshold = best[0]
@@ -20,7 +21,7 @@ def apply_best_no_tol(activity_label, filename):
     tolerance_value = best_tolerance[int(activity_label)] 
     return int(window_threshold), int(skip_window), int(tolerance_value)
 
-# genetic algorithm
+# genetic algorithm for training tolerance hyp.
 def genetic_algorithm_gt_data(activity, args, all_mod_eval_output, n_bits, termin_iter, max_iter, n_pop, r_cross, r_mut, log_dir, sbj,activity_label, filename_best_csv, activity_name):
 	
 	"""
@@ -54,7 +55,9 @@ def genetic_algorithm_gt_data(activity, args, all_mod_eval_output, n_bits, termi
 		ndarray: Array containing the best values of window threshold, skip windows, and tolerance value.
     """ 
 
+	# filename of trained hyp except tol (= 0)
 	best_filename_no_tol = filename_best_csv
+	# reaturning the trained hyp.
 	win_thr, skip_win, _ = apply_best_no_tol(activity_label, best_filename_no_tol)
 	 # define the objective function
 	# initial population of random bitstring
@@ -114,9 +117,11 @@ def genetic_algorithm_gt_data(activity, args, all_mod_eval_output, n_bits, termi
 			f1_pop.append(f_one)		
 			comp_saved_ratio_pop.append(comp_saved_ratio)
 			data_saved_ratio_pop.append(data_saved_ratio)
+   
 		# check for new best solution
 		for i in range(n_pop):
-
+      
+			# checking if candidate solution is better than previous best solution 
 			if scores_pop[i] < best_eval:
 				#setting termin count to zero as lower loss found
 				termin_count = 0 
@@ -167,6 +172,8 @@ def genetic_algorithm_gt_data(activity, args, all_mod_eval_output, n_bits, termi
 	# activity_plot_comp_saved_gen(best_comp_saved_ratio_list, best_gen_list, config, activity_name)
 	# activity_plot_threshold_gen(win_thrs_list, best_gen_list, config, activity_name)
 	# activity_plot_skip_windows_gen(skip_win_list, best_gen_list, config, activity_name)	
+	
+	# saving training logs to csv
 	activity_save_ml_train_to_csv(best_loss_list, win_thrs_list, skip_win_list, tol_value_list, best_f1_list, 
                                                 best_data_saved_ratio_list, best_comp_saved_ratio_list, best_gen_list, args, log_dir, sbj, activity_name)
 	

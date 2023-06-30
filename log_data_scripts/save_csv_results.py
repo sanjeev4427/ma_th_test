@@ -1,43 +1,12 @@
+###############################################
+# funcitons to save results to csv file
+###############################################
+
 import csv
 import numpy as np
 import pandas as pd
 import os
-from misc.close_excel import close_all_excel_files
 from misc.osutils import mkdir_if_missing 
-# def save_sim_ann_results_to_csv(loss_array, threshold_value_array, skip_windows_array, fscore_array, 
-#                                                 data_saved_array, comp_saved_array, temp_array, config, ann_rate):
-
-#     data_dict = {'loss': loss_array, 
-#             'threshold_value': threshold_value_array, 
-#             'skip_windows': skip_windows_array, 
-#             'fscore' : fscore_array, 
-#             'data_saved' : data_saved_array, 
-#             'comp_saved' : comp_saved_array, 
-#             'temp' : temp_array
-#             }
-
-#     df = pd.DataFrame(data_dict)
-#     df.to_csv(rf'C:\Users\minio\Box\Thesis- Marius\csv_data\sim_ann_data_for_ann_rate_{ann_rate}_{config["dataset"]}.csv', index=False, header=True)           
-#     return None
-
-# def save_best_sim_ann_results_to_csv(ann_rate_array, best_thrs_for_ann_rate_lst, 
-#                                         best_skip_win_for_ann_rate_lst,
-#                                         best_f1_for_ann_rate_lst, best_data_saved_for_ann_rate_lst, 
-#                                         best_comp_saved_for_ann_rate_lst,
-#                                         best_loss_for_ann_rate_lst, elapsed_time_lst, DATASET):
-
-#     best_dict_for_ann_rate = { 'Annealing rate' : ann_rate_array,
-#                               'Threshold': best_thrs_for_ann_rate_lst,
-#                               'Skip Windows': best_skip_win_for_ann_rate_lst,
-#                               'f1 score': best_f1_for_ann_rate_lst,
-#                               'data saved': best_data_saved_for_ann_rate_lst,
-#                               'computation saved': best_comp_saved_for_ann_rate_lst,
-#                               'lowest loss': best_loss_for_ann_rate_lst,
-#                               'elapsed time': elapsed_time_lst
-#                               }
-#     best_df = pd.DataFrame(best_dict_for_ann_rate)
-#     best_df.to_csv (rf'C:\Users\minio\Box\Thesis- Marius\csv_data\best_results_for_ann_rate_{DATASET}.csv', index = False, header=True) 
-#     print(best_df)
 
 def activity_save_ml_train_to_csv(loss_array, window_threshold_array, skip_windows_array, tol_value_array, fscore_array, 
                                                 data_saved_array, comp_saved_array, temp_array, args, log_dir, sbj, activity_name):

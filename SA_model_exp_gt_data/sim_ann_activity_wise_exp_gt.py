@@ -3,24 +3,21 @@ import numpy as np
 import time
 import os
 from sklearn.metrics import f1_score
-# from Other_helpful_scripts.bar_plot_act_f1_comp import bar_plot_act_f1_comp
-# from Other_helpful_scripts.graph_activities_gt_val_mod_val import apply_best_settings_get_f1_full_data, graph_gt_val_mod_val
 from SA_model.generate_input_data_for_SA import ml_generate_train_data, ml_generate_train_data_exp_gt
-
 from SA_model.simulated_annealing import simulated_annealing
 from log_data_scripts.save_csv_results import activity_save_best_results_to_csv
 from ml_evaluate import mod_bar_graph
 from ml_validation import ml_validation
 
- 
+# number of windows to time equation
 def window_to_time(window, config):
-    # number of windows to time equation
     # n is number of windows
     # one window is 1 sec
     one_window_duration = 1 
     t = (window-1)*(1-config["sw_overlap"]/100)*one_window_duration + one_window_duration 
     return t
 
+# get trained window threshold and skip windows 
 def apply_best_no_tol(activity_label, filename):
     best = np.loadtxt(filename, skiprows=1, usecols=(1,2,3),delimiter=',').T
     best_threshold = best[0]
@@ -31,6 +28,7 @@ def apply_best_no_tol(activity_label, filename):
     tolerance_value = best_tolerance[int(activity_label)] 
     return int(window_threshold), int(skip_window), int(tolerance_value)
 
+# funciton to train tolerance hyperparameter
 def train_tolerance_hyp_sa(args, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
                            init_temp, ann_rate, data, log_dir, sbj, filename_best_csv, exp_name):
 
@@ -132,6 +130,7 @@ def train_tolerance_hyp_sa(args, max_step_size_win_thr, max_step_size_skip_win, 
             f_one_gt_val_avg_lst.append(f_one_gt_val_avg)
         # saving best settings for each subject 
         algo_name = 'SA'
+        # save best results to csv file
         filename_best_csv = activity_save_best_results_to_csv(best_thrs_for_activity_lst, 
                                     best_skip_win_for_activity_lst,
                                     best_tol_val_for_activity_lst,
@@ -140,7 +139,8 @@ def train_tolerance_hyp_sa(args, max_step_size_win_thr, max_step_size_skip_win, 
                                     best_loss_for_activity_lst, elapsed_time_lst, acitivity_name_lst,f_one_gt_mod_val_lst,
                                     f_one_gt_val_lst, f_one_val_mod_val_lst,f_one_gt_mod_val_avg_lst,f_one_gt_val_avg_lst, log_dir, args, algo_name, sbj)
     
-    
+
+# SA to train on GT data while keeping the tolerance = 0    
 def sim_ann_activity_wise_gt(args, window_threshold, skip_windows, tol_value, max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, \
                            init_temp, ann_rate,  log_folder_name, data):
     config = vars(args)
@@ -154,10 +154,8 @@ def sim_ann_activity_wise_gt(args, window_threshold, skip_windows, tol_value, ma
         label_name = ['null_class', 'cutting', 'inverting', 'peeling', 'pestling',\
                        'pipetting', 'pouring', 'stirring', 'transfer']
         activity_labels = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
-    
 
     for _, sbj in enumerate(np.unique(data[:, 0])):
-    # for sbj in [2]:
         # generating training data (validation data -> leave-one-out)
         ml_train_gt_gt = ml_generate_train_data_exp_gt(data, args, sbj)
         
