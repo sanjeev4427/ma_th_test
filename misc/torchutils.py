@@ -8,8 +8,8 @@
 import os
 import random
 import numpy as np
+from prettytable import PrettyTable
 import torch
-# from prettytable import PrettyTable
 
 
 def seed_torch(seed):
