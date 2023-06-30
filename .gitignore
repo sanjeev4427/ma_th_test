@@ -18,3 +18,4 @@ out_err/
 *.pyc
 *.csv
 test_script_temp.py
+temp_files_del_later/

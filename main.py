@@ -1,10 +1,9 @@
 ##################################################
 # Main script used to commence experiments
 ##################################################
-# Author: Marius Bock
-# Email: marius.bock(at)uni-siegen.de
+# Author: Sanjeev Kumar
+# Email: sanjeev4427(at)gmail.com
 ##################################################
-
 import argparse
 import os
 import time
@@ -13,36 +12,19 @@ import numpy as np
 import pandas as pd
 from GA_model_all_activities_as_one.GA_all_activity import ga_all_activity
 from GA_model_exp_gt_data.GA_activity_wise_exp_gt import ga_activity_wise_exp_gt
-# from GA_model.GA_activity_wise import ga_activity_wise
 from SA_model.find_initial_temperature import find_initial_temperature
-# import torch
-# from sklearn.metrics import accuracy_score, f1_score
-
-# from sklearn.model_selection import train_test_split
-# from GA_model.GA_activity_wise import ga_activity_wise
-# from GA_model.decode import decode
-# from GA_model.genetic_algo import genetic_algorithm
-# from Other_helpful_scripts.graph_activities_gt_val_mod_val import graph_gt_val_mod_val
-# from SA_model.evaluation_simulated_annealing import evaluate_sim_ann_on_best
 from SA_model.generate_input_data_for_SA import ml_generate_train_data
 from SA_model.sim_ann_activity_wise import sim_ann_activity_wise
 from GA_model.GA_activity_wise import ga_activity_wise
 from SA_model_exp_gt_data.sim_ann_activity_wise_exp_gt import sim_ann_activity_wise_gt
 from SA_model_not_activity_wise.sim_ann_all_activities import sim_ann_all_activity
-from misc.close_excel import close_all_excel_files
-# from ml_evaluate import ml_evaluate
 from ml_validation import ml_validation
-
-
 from model.train import predict
 from model.DeepConvLSTM import DeepConvLSTM
-
 from data_processing.preprocess_data import load_dataset
 from data_processing.sliding_window import apply_sliding_window
 from model.validation import cross_participant_cv
 from model.train import predict
-
-
 from misc.logging import Logger
 from misc.torchutils import seed_torch
 
@@ -181,62 +163,39 @@ SAVE_CHECKPOINTS = True
 SAVE_ANALYSIS = True
 
 """
-Machine learning training : SA
-- INIT_TEMP_ITR: iterations used for the initial temperature calculation 
+Machine learning training : SA/GA
 - MAX_STEP_SIZE_THR: upper limit of window threshold interval
 - MAX_STEP_SIZE_SKIP: upper limit of window skip interval
 - MAX_STEP_SIZE_TOL: upper limit of window tolerance interval
-- ANN_RATE: annealing schedule; how fast the temperature will decrease
 - ALGO_NAME: mateheuristic algorithm name 
-
+- NB_SEEDS: random seeds for checking the statistical variance of the results
+- VALIDATE: True for validating and False for training
+- GT_DATA_EXP: True for running validation for exp 1
+- F_ALPHA: Loss funciton parameter for controlling f-score part of loss function
+- C_ALPHA: Loss funciton parameter for controlling computation saving part of loss function
+- D_ALPHA: Loss funciton parameter for controlling data saving part of loss function
 """
-# INIT_TEMP_ITR = 30
-# MAX_STEP_SIZE_THR = 50
-# MAX_STEP_SIZE_SKIP = 50
-# MAX_STEP_SIZE_TOL = 3
-# ANN_RATE = 0.5
 ALGO_NAME = None
 MAX_WIN_THR = None
 MAX_WIN_SKIP = None
 MAX_WIN_TOL = None
-
 VALIDATE = False # True if want to run validation 
 GT_DATA_EXP = False # True if want to run training on gt data
-NB_SEEDS = 3 # Number of seeds using for statistical variation analysis
+NB_SEEDS = 3 
 F_ALPHA = 10
 C_ALPHA = 1
 D_ALPHA = 2
 
-
-# # settings for GA
-# # define range for input
-# bounds = [[1, 128], [1, 128], [1,10]]
-# # define the max iterations to stop getting stuck 
-# max_iter = 100
-# # termination iteration
-# termin_iter = 5
-# # bits per variable
-# n_bits = 7
-# # define the population size
-# n_pop = 50
-# # crossover rate
-# r_cross = 0.9
-# # mutation rate
-# r_mut = 1.0 / (float(n_bits) * len(bounds))
-
-# for debugging
-VALIDATE = True# True
-DATASET = 'wetlab' 
-ALGO_NAME = 'sa' 
-MAX_WIN_THR = 16
-MAX_WIN_SKIP = 128
-MAX_WIN_TOL= 16
-NAME= 'max_win_16_128_16'
+# for running debugging sessions
+# VALIDATE = True# True
+# DATASET = 'wetlab' 
+# ALGO_NAME = 'sa' 
+# MAX_WIN_THR = 16
+# MAX_WIN_SKIP = 128
+# MAX_WIN_TOL= 16
+# NAME= 'max_win_16_128_16'
+# NAME= 'ex_loss_w_16_128_16_lp_64_1_1'
 # EXP_ONE_HYP_ALL_ACT = True
-
-
-
-
 
 def main(args):
      # apply the chosen random seed to all relevant parts
@@ -257,6 +216,7 @@ def main(args):
      log_date = time.strftime('%Y%m%d')
      log_timestamp = time.strftime('%H%M%S')
      log_folder_name = os.path.join('logs', log_date, log_timestamp + f'_{args.dataset}_{args.algo_name}_{args.name}')
+     
      # saves logs to a file (standard output redirected)
      if args.logging:
           if args.name:
@@ -277,9 +237,10 @@ def main(args):
                          saving_type=args.saving_type
                           )
 
-     args.sampling_rate = sampling_rate
+     args.sampling_rate = sampling_rate # input data sampling rate (eg. 50 Hz)
      args.nb_classes = nb_classes  # Number of classes (activities)
      args.class_names = class_names # activity labels 
+     
      # changing classes to 9 (pouring = pour cata) for the ML training 
      if args.dataset == 'wetlab':
         label_name = ['null_class', 'cutting', 'inverting', 'peeling', 'pestling',\
@@ -290,10 +251,11 @@ def main(args):
         args.class_names = label_name
      args.has_null = has_null
 
-     ############################################# DEEP LEARNING TRAINING #############################################################
-
      # # re-create full dataset for splitting purposes
      data = np.concatenate((X, (np.array(y)[:, None])), axis=1)
+     
+     ############################################# DEEP LEARNING TRAINING #############################################
+     
      # uncomment this section to run deep learning training
      # custom_net = None
      # custom_loss = None
@@ -310,19 +272,21 @@ def main(args):
      
      ############################################ Simulated Annealing #################################################
      # settings for SA
-     # setting range for hyperparameters to be optimised
      if args.dataset == 'wetlab':
+          # range for hyperparameters
           window_threshold = np.array([1,args.max_win_thr])
           skip_windows = np.array([1,args.max_win_skip])
           tol_value = np.array([0, args.max_win_tol])
           init_temp = 0.01743
+          print(f'Dataset used: {args.dataset}, threshold window: {window_threshold}, skip window: {skip_windows}, tolerance winsows: {tol_value}')
           
      if args.dataset == 'rwhar':
+          # range for hyperparameters
           window_threshold = np.array([1,args.max_win_thr])
           skip_windows = np.array([1,args.max_win_skip])
           tol_value = np.array([0, args.max_win_tol])
           init_temp = 0.083 
-          print(args.dataset, window_threshold, skip_windows, tol_value )
+          print(f'Dataset used: {args.dataset}, threshold window: {window_threshold}, skip window: {skip_windows}, tolerance winsows: {tol_value}')
 
      # iterations at every Temperature value (for finding initial temperature )
      n_iter_init_temp = 30
@@ -341,7 +305,8 @@ def main(args):
      #                            window_threshold, skip_windows,
      #                            max_step_size_win_thr, max_step_size_skip_win, max_step_size_tol_val, n_iter_init_temp)
 
-#----------------- SA training (activity wise) ------------------------------------------------------
+#----------------- SA training (activity wise, experiment 2) (for exp 4 change loss function in exp 2)-------------------------------------
+     # uncomment following block to run experiment 2 of thesis
      # if args.validate == False:
      #      # Simulated Annealing training
      #      if args.algo_name == 'sa':
@@ -352,19 +317,11 @@ def main(args):
      #                                    init_temp, ann_rate_array, log_folder_name, data)
      #           else:
      #                print("please enter the name of the experiment! ")
-               
-    
-     # if args.validate == True: 
-     #      #validating on best settings 
-     #      if args.name != None: 
-     #           ml_validation(args, data, args.algo_name, log_folder_name)
-     #      else:
-     #           print("please enter the name of the experiment! ")
+#----------------------------------------------------------------------------------------------------
 
 
-#-----------------------------------------------------------------------------
-#----------------- SA training (all activities) ------------------------------------------------------
-     # training on all activity predictions at once (all activities considered same)  
+#----------------- SA training (activity independent, experiment 1) ------------------------------------------------------
+     # training on all activity predictions at once 
      # if args.validate == False:
      #      # Simulated Annealing training
      #      if args.algo_name == 'sa':
@@ -375,14 +332,9 @@ def main(args):
      #           else:
      #                print("please enter the name of the experiment! ")           
     
-     # if args.validate == True: 
-     #      #validating on best settings 
-     #      if args.name != None: 
-     #           ml_validation(args, data, args.algo_name, log_folder_name)
-     #      else:
-     #           print("please enter the name of the experiment! ")
 #-------------------------------------------------------------------------------------
-#----------------------------------- SA training (exp on GT data) ------------------------------------------------------
+
+#----------------------------------- SA training (exp 3, on GT data) ------------------------------------------------------
      # taining on gt data (first thrs and skip window then tolerance window) 
      # if args.validate == False:
      #      # Simulated Annealing training
@@ -393,16 +345,10 @@ def main(args):
      #                          init_temp, ann_rate_array, log_folder_name, data)
      #           else:
      #                print("please enter the name of the experiment! ")
-     
-     if args.validate == True: 
-          #validating on best settings 
-          if args.name != None: 
-               ml_validation(args, data, args.algo_name, log_folder_name)
-          else:
-               print("please enter the name of the experiment! ")
-     
                
-################################ Genetic algorithm ####################################################
+################################################### Genetic algorithm ##########################################################
+
+#--------------------------- GA training (exp 2, activity wise, change loss function for exp 4) -----------------------------------------------
      # settings for GA
      # define range for input, first interval is for window threshold, 
      # second interval is for window skip and third is for window tolrance.
@@ -421,6 +367,7 @@ def main(args):
      r_mut = 1.0 / (float(n_bits) * len(bounds))
      # algo_name = 'GA'
      
+
      # if args.validate == False:
      #      # training with genetic algorithm 
      #      if args.algo_name == 'ga':
@@ -433,13 +380,13 @@ def main(args):
      #                print("please enter the name of experiment! ")
 
      
-#-------------------- GA training (all activities) ------------------------------------------------------
+#---------------------------- GA training (exp 1, activity independant) -----------------------------------------
      # settings for GA
      # define range for input, first interval is for window threshold, 
      # second interval is for window skip and third is for window tolrance.
      # bounds = [[1, args.max_win_thr], [1, args.max_win_skip], [1,args.max_win_tol]]
      # # the max iterations (to stop getting stuck) 
-     # max_iter = 100 #! update this 
+     # max_iter = 100 
      # # termination iteration
      # termin_iter = 5
      # # bits per variable
@@ -462,7 +409,7 @@ def main(args):
      #           else:
      #                print("please enter the name of experiment! ")
     
-#-------------------- GA training (exp on GT data) ------------------------------------------------------
+#-------------------- GA training (exp 3, on GT data) ------------------------------------------------------
      # settings for GA
      # define range for input, first interval is for window threshold, 
      # second interval is for window skip and third is for window tolrance.
@@ -491,7 +438,24 @@ def main(args):
      #           else:
      #                print("please enter the name of experiment! ")
      
-  #------------------------------------------------------------------   
+  #----------------------------------------------------------------------------------------------------------   
+
+####################################################### validation ML ##############################################################
+
+# validation (LOSO)
+     if args.validate == True: 
+          #validating on best settings 
+          if args.name != None: 
+               ml_validation(args, data, args.algo_name, log_folder_name)
+          else:
+               print("please enter the name of the experiment! ")
+#-------------------------------------------------------------------------------------------------------------       
+
+
+
+
+
+
      
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
